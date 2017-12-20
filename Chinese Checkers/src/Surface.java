@@ -37,5 +37,4 @@ public class Surface extends JPanel{
 		  	g.drawImage(image, 0, 0, null);
 		  	doDrawing(g);        
 		  }
-	
 }

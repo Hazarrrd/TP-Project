@@ -43,7 +43,7 @@ class Window extends Frame implements ActionListener{
   		
   		Object[] options = {"OK", "Zamknij"};
   		
-  		int type = JOptionPane.showOptionDialog(null, "Wybierz ilosc graczy", "Chinese checkers", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
+  		int type = JOptionPane.showOptionDialog(null, "Wybierz ilosc wszystkich graczy oraz botow", "Chinese checkers", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
 
   		if(type == 0)
   		{
