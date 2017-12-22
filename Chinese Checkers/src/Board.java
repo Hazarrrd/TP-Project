@@ -1,4 +1,4 @@
-package chess;
+
 
 import java.util.*;
 

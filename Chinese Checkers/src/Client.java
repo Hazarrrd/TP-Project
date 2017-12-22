@@ -44,7 +44,7 @@ public class Client {
         out = new PrintWriter(socket.getOutputStream(), true);
 
         // DO USUNIECIA
-        messageLabel.setBackground(Color.lightGray);
+       /* messageLabel.setBackground(Color.lightGray);
         frame.getContentPane().add(messageLabel, "South");
 
         JPanel boardPanel = new JPanel();
@@ -60,7 +60,8 @@ public class Client {
             boardPanel.add(board[i]);
         }
         frame.getContentPane().add(boardPanel, "Center");
-        // ^^^^^^^^^^^^^^^
+        // ^^^^^^^^^^^^^^^ */
+       Lobby ekran1 = new Lobby();
     }
 
     public void play() throws Exception {
@@ -130,10 +131,10 @@ public class Client {
         while (true) {
             String serverAddress = (args.length == 0) ? "localhost" : args[1];
             Client client = new Client(serverAddress);
-            client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            client.frame.setSize(240, 160);
-            client.frame.setVisible(true);
-            client.frame.setResizable(false);
+            //client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+          //  client.frame.setSize(240, 160);
+           // client.frame.setVisible(true);
+           // client.frame.setResizable(false);
             client.play();
             break;
         }
