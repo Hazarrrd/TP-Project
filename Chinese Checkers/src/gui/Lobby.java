@@ -77,11 +77,10 @@ public class Lobby extends JFrame {
 		
 		String response;
 		
-		run(out, in);
 	}
 
 
-	private void run(PrintWriter out, BufferedReader in) {
+	public void run(PrintWriter out, BufferedReader in) {
 		String response;
 		while(true){
 			try {

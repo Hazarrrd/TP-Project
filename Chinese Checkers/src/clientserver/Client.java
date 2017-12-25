@@ -65,6 +65,7 @@ public class Client {
         frame.getContentPane().add(boardPanel, "Center");
         // ^^^^^^^^^^^^^^^ */
        Lobby ekran1 = new Lobby(out,in);
+       ekran1.run(out,in);
     }
 
     public void play() throws Exception {
