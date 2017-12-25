@@ -7,21 +7,23 @@ import game.Color;
 import game.Game;
 import game.GameList;
 
-
+/**
+ * Class represens living player, extends abstract class Player
+ * @author Janek
+ *
+ */
 public class NormalPlayer extends Player {
 
 		private String stage="LOBBY";
-		private int realPLayers_ammount;
-		private int bots_ammount;
-		private int players_ammount;
-		private ArrayList<Player> playerList;
-		private boolean shouldWePlay;
-		private ArrayList<Player> normalPlayerList;
+		
 
-		public NormalPlayer(Socket socket, Color color,GameList gamelist) {
-            super(socket,color,gamelist);
+		public NormalPlayer(Socket socket,GameList gamelist) {
+            super(socket,gamelist);
         }
 		
+		/**
+		 * Method that communicate with client
+		 */
 		public void run() {
             try {
             	while(stage=="LOBBY"){
@@ -59,11 +61,11 @@ public class NormalPlayer extends Player {
             					if((game.realPLayers_ammount+game.bots_ammount)>=2 && (game.realPLayers_ammount+game.bots_ammount)<=6 && (game.realPLayers_ammount+game.bots_ammount)!=5 ) {
 	            					if(gamelist.isNameFree(command.substring(14))){
 		            					stage="GAMEWINDOW";
-		            					game.players_ammount=bots_ammount+realPLayers_ammount;
-		            					//botMaker(game.bots_ammount);
-		            					setValues(game);
+		            					game.players_ammount=game.bots_ammount+game.realPLayers_ammount;
 		            					game.setGameName(command.substring(14));
 		            					gamelist.addGame(game);
+		            					setColor(game);
+		            					//botMaker(game.bots_ammount);
 		            					output.println("GAMEWINDOW");
 	            					}
 	            					else
@@ -78,12 +80,18 @@ public class NormalPlayer extends Player {
             	
             	//wait for all players
             	while(game.playerList.size()!=game.players_ammount && stage=="GAMEWINDOW"){
-            		
+            		String command = input.readLine();
+            		if (command.startsWith("QUIT")) {
+            			game.disconnectPlayer(this);
+            			if(!(game.checkIfSomoneIs()))
+            				gamelist.removeGame(game);
+    					return;
+    				}
             	}
                 // Actual game starts
                 while (stage=="GAMEWINDOW") {
                 	String command = input.readLine();
-                	if(playerList.size()==1)
+                	if(game.playerList.size()==1)
                 		output.println("DEFEAT");
                 	if(command.startsWith("MOVE FROM"))
                 		actualLocation = Integer.parseInt(command.substring(10));
@@ -94,7 +102,7 @@ public class NormalPlayer extends Player {
 	                            output.println("VALID_MOVE");
 	                            if(didPlayerWon(this))
 	                            	output.println("VICTORY");
-	                            	shouldWePlay=false;
+	                            	game.shouldWePlay=false;
 	                        } 
 	                        else {
 	                            output.println("MESSAGE ?");
@@ -102,14 +110,18 @@ public class NormalPlayer extends Player {
 	                    } 
 	                    else 
 	                    	if (command.startsWith("QUIT")) {
+	                    		game.disconnectPlayer(this);
+	                			if(!(game.checkIfSomoneIs()))
+	                				gamelist.removeGame(game);
 	                    		return;
 	                    	}
-                	while(!shouldWePlay){
+                	while(!game.shouldWePlay){
                 		if(command.startsWith("I WANT PLAY"))
-                			shouldWePlay=true;
+                			game.shouldWePlay=true;
                 		if (command.startsWith("QUIT")){
-                			playerList.remove(this);
-                			normalPlayerList.remove(this);
+                			game.disconnectPlayer(this);
+                			if(!(game.checkIfSomoneIs()))
+                				gamelist.removeGame(game);
                     		return;
                 		}
                 	}
@@ -122,14 +134,18 @@ public class NormalPlayer extends Player {
             }
         }
 
+		private void setColor(Game game) {
+			this.color=Color.values()[game.normalPlayerList.size()];
+		}
+
 		/**
-		 * Method will prepere bots.
-		 * @param botNumber
+		 * Method find the searched game and sets it into player
+		 * @param string Game name we are searching
 		 */
 		private void setGame(String string) {
 			if(gamelist.findGame(string)!=null){
 				game=gamelist.findGame(string);
-				setValues(game);
+				setColor(game);
 				stage="GAMEWINDOW";
 				output.println("GOOD GAMENAME");
 			}
@@ -138,19 +154,15 @@ public class NormalPlayer extends Player {
 				
 		}
 		
-		private void setValues(Game game){
-			realPLayers_ammount=game.realPLayers_ammount;
-			bots_ammount=game.bots_ammount;
-			players_ammount=game.players_ammount;
-			playerList=game.playerList;
-			shouldWePlay=game.shouldWePlay;
-			normalPlayerList=game.normalPlayerList;
-		}
 		
+		/**
+		 * This creates bot objects
+		 * @param botNumber number of expected bots
+		 */
 		private void botMaker(int botNumber) {
 			for(int j=0;j<botNumber;j++){
 				game.botList.add(new BOTPlayer(Color.values()[Color.values().length-j],game));
-				//game.botList.get(j).run();
+				game.botList.get(j).run();
 			}
 		}
     }

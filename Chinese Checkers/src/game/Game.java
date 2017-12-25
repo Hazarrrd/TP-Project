@@ -11,7 +11,7 @@ import player.*;
 
 /**
  * @author Janek
- *Game class, responsible for carrying game
+ *Game class, responsible for carrying single game
  */
 public class Game {
 
@@ -35,6 +35,26 @@ public class Game {
 	
 	public String getGameName(){
 		return this.gameName;
+	}
+	
+	public void connectPlayer(Player player){
+		this.playerList.add(player);
+		this.normalPlayerList.add(player);
+	}
+	
+	public void disconnectPlayer(Player player){
+		this.playerList.remove(player);
+		this.normalPlayerList.remove(player);
+	}
+	
+	/**
+	 * 
+	 * @return true if is not empty, false if it is
+	 */
+	public Boolean checkIfSomoneIs(){
+		if(this.normalPlayerList.size()==0)
+			return false;
+		return true;
 	}
 	
 }

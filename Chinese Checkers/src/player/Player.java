@@ -27,12 +27,11 @@ public abstract class Player extends Thread {
     Game game;
     GameList gamelist;
 
-    
-    public Player(Socket socket, Color color, GameList gamelist) {
+    //constructor
+    public Player(Socket socket, GameList gamelist) {
     	//game.playerList.add(this);
     	this.gamelist=gamelist;
         this.socket = socket;
-        this.color = color;
         try {
             input = new BufferedReader(
                 new InputStreamReader(socket.getInputStream()));
@@ -43,7 +42,7 @@ public abstract class Player extends Thread {
             System.out.println("Player died: " + e);
         }
     }
-    
+    // constructor
     public Player(){	
     }
     
