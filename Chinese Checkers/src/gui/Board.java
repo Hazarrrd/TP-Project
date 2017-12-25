@@ -1,6 +1,9 @@
+package gui;
 
 
 import java.util.*;
+
+import game.Color;
 
 public class Board {
 	
