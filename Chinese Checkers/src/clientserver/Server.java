@@ -1,4 +1,9 @@
+package clientserver;
 import java.net.ServerSocket;
+
+import game.Color;
+import game.GameList;
+import player.NormalPlayer;
 
 
 
@@ -9,18 +14,19 @@ public class Server {
   
     public static void main(String[] args) throws Exception {
         ServerSocket listener = new ServerSocket(8901);
+        GameList gamelist=new GameList();
         System.out.println("Server is Running");
         try {
+        	//Game game = new Game();
             while (true){
-                Game game = new Game();
             	
-                Game.Host host = game.new Host(listener.accept(), Color.values()[0]);
-                host.start();
-                while(game.findOppoments==false){
-                }
+                NormalPlayer player = new NormalPlayer(listener.accept(), Color.values()[0], gamelist);
+                player.start();
+               // while(game.findOppoments==false){
+               // }
               
-                for(int j=1;j<game.realPLayers_ammount;j++)
-        			game.normalPlayerList.add(game.new NormalPlayer(listener.accept(), Color.values()[j]));
+              //  for(int j=1;j<game.realPLayers_ammount;j++)
+        		//	host.game.normalPlayerList.add(new NormalPlayer(listener.accept(), Color.values()[j]));
                 
                 
             }

@@ -1,3 +1,4 @@
+package clientserver;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
@@ -13,6 +14,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import gui.Lobby;
 
 /**
  * Client class. There is also GUI.
@@ -61,7 +64,7 @@ public class Client {
         }
         frame.getContentPane().add(boardPanel, "Center");
         // ^^^^^^^^^^^^^^^ */
-       Lobby ekran1 = new Lobby();
+       Lobby ekran1 = new Lobby(out,in);
     }
 
     public void play() throws Exception {
@@ -78,6 +81,7 @@ public class Client {
             }
             while (true) {
                 response = in.readLine();
+               
                 if (response.startsWith("VALID_MOVE")) {
                     messageLabel.setText("Valid move, please wait");
                     currentSquare.setIcon(icon);
@@ -128,15 +132,15 @@ public class Client {
      * Runs the client as an application.
      */
     public static void main(String[] args) throws Exception {
-        while (true) {
+       // while (true) {
             String serverAddress = (args.length == 0) ? "localhost" : args[1];
             Client client = new Client(serverAddress);
             //client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
           //  client.frame.setSize(240, 160);
            // client.frame.setVisible(true);
            // client.frame.setResizable(false);
-            client.play();
-            break;
-        }
+            //client.play();
+         //   break;
+        //}
     }
 }
