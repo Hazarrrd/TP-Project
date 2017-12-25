@@ -16,6 +16,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+/**
+ * This class makes GUI, where player can set up the game
+ * @author Janek
+ *
+ */
 public class GameSettings extends JFrame implements ActionListener {
 	
 	private JButton start;
@@ -33,10 +38,7 @@ public class GameSettings extends JFrame implements ActionListener {
 	private PrintWriter out;
 	private BufferedReader in;
 	
-	/**
-	 * Klasa Symulacja jest główną klasą programu
-	 * 
-	 */
+	//konstruktor
 	public GameSettings(PrintWriter out, BufferedReader in) {
 		this.out=out;
 		this.in=in;
@@ -70,7 +72,11 @@ public class GameSettings extends JFrame implements ActionListener {
 			
 	}
 
-
+/**
+ * This method is reponsible for communmicaton between client-server
+ * @param out Printwriter
+ * @param in BufferedReder
+ */
 	public void run(PrintWriter out, BufferedReader in) {
 		String response;
 		while(true){

@@ -37,7 +37,7 @@ public class Client {
     private BufferedReader in;
     private PrintWriter out;
 
-  
+  // konstruktor
     public Client(String serverAddress) throws Exception {
 
         // Setup networking
@@ -67,7 +67,7 @@ public class Client {
        Lobby ekran1 = new Lobby(out,in);
        ekran1.run(out,in);
     }
-
+   
     public void play() throws Exception {
         String response;
         try {

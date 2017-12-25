@@ -8,7 +8,11 @@ import player.NormalPlayer;
 
 
 
-
+/**
+ * That class is server of the application
+ * @author Janek
+ *
+ */
 public class Server {
 
   
@@ -20,7 +24,7 @@ public class Server {
         	//Game game = new Game();
             while (true){
             	
-                NormalPlayer player = new NormalPlayer(listener.accept(), Color.values()[0], gamelist);
+                NormalPlayer player = new NormalPlayer(listener.accept(), gamelist);
                 player.start();
                // while(game.findOppoments==false){
                // }

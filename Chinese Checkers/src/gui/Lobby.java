@@ -17,6 +17,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+/**
+ * This class is GUI, where player choose if he want to create or join game/
+ * @author Janek
+ *
+ */
 public class Lobby extends JFrame {
 	
 	private JButton joinGame;
@@ -30,7 +35,7 @@ public class Lobby extends JFrame {
 	private BufferedReader in;
 	private JTextArea tekst;
 	
-
+//constructor
 	public Lobby(PrintWriter out,BufferedReader in) {
 		this.out=out;
 		this.in=in;
@@ -79,7 +84,11 @@ public class Lobby extends JFrame {
 		
 	}
 
-
+/**
+ * Method responsible for communication between client-server
+ * @param out Printwriter
+ * @param in BufferedReader
+ */
 	public void run(PrintWriter out, BufferedReader in) {
 		String response;
 		while(true){
