@@ -56,14 +56,18 @@ public class NormalPlayer extends Player {
             				} 
             			else
             				if (command.startsWith("FINDOPPOMENTS "))
-            					if((game.realPLayers_ammount+game.bots_ammount)>=2 && (game.realPLayers_ammount+game.bots_ammount)<=6 && (game.realPLayers_ammount+game.bots_ammount)!=5) {
-            					stage="GAMEWINDOW";
-            					game.players_ammount=bots_ammount+realPLayers_ammount;
-            					//botMaker(game.bots_ammount);
-            					setValues(game);
-            					game.setGameName(command.substring(14));
-            					gamelist.addGame(game);
-            					output.println("GAMEWINDOW");
+            					if((game.realPLayers_ammount+game.bots_ammount)>=2 && (game.realPLayers_ammount+game.bots_ammount)<=6 && (game.realPLayers_ammount+game.bots_ammount)!=5 ) {
+	            					if(gamelist.isNameFree(command.substring(14))){
+		            					stage="GAMEWINDOW";
+		            					game.players_ammount=bots_ammount+realPLayers_ammount;
+		            					//botMaker(game.bots_ammount);
+		            					setValues(game);
+		            					game.setGameName(command.substring(14));
+		            					gamelist.addGame(game);
+		            					output.println("GAMEWINDOW");
+	            					}
+	            					else
+	            						output.println("MESSAGE Game name is already used");
             					}
             					else
             						output.println("MESSAGE Wrong data");

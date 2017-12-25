@@ -24,4 +24,11 @@ public class GameList {
 	public void removeGame(Game game) {
 		this.gameList.remove(game);
 	}
+
+	public boolean isNameFree(String string) {
+		for(int i=0;i<this.gameList.size();i++)
+			if(this.gameList.get(i).getGameName().equals(string))
+				return false;
+		return true;
+	}
 }
