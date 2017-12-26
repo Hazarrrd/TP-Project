@@ -105,6 +105,7 @@ public class Lobby extends JFrame {
 						frame.addWindowListener( new WindowAdapter() {
 				
 							public void windowClosing(WindowEvent e) {
+								out.println("QUIT");
 								System.exit(0);
 							}
 							});

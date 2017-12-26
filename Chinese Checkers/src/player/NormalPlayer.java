@@ -65,6 +65,7 @@ public class NormalPlayer extends Player {
 		            					game.setGameName(command.substring(14));
 		            					gamelist.addGame(game);
 		            					setColor(game);
+		            					game.connectPlayer(this);
 		            					//botMaker(game.bots_ammount);
 		            					output.println("GAMEWINDOW");
 	            					}
@@ -134,6 +135,10 @@ public class NormalPlayer extends Player {
             }
         }
 
+		/**
+		 * That class sets color for the player
+		 * @param game
+		 */
 		private void setColor(Game game) {
 			this.color=Color.values()[game.normalPlayerList.size()];
 		}
@@ -146,6 +151,7 @@ public class NormalPlayer extends Player {
 			if(gamelist.findGame(string)!=null){
 				game=gamelist.findGame(string);
 				setColor(game);
+				game.connectPlayer(this);
 				stage="GAMEWINDOW";
 				output.println("GOOD GAMENAME");
 			}
