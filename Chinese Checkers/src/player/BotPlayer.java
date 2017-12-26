@@ -6,7 +6,7 @@ import game.Game;
  * @author Janek
  *
  */
-class BOTPlayer extends Player {
+class BOTPlayer extends Player implements Runnable {
     	
     	/**
     	 * constructor
@@ -22,12 +22,17 @@ class BOTPlayer extends Player {
         }
     	
     	/**
-    	 * Method responsible for communication client-server
+    	 * Method responsible for communication client-server and for thread run.
     	 */
     	public void run() {
     			//wait for all players
         		while(game.playerList.size()!=game.players_ammount){
-        		
+        		//	try {
+						//this.wait();
+					//} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+					//	e.printStackTrace();
+				//	}
         		}
                // botMove(this);
         }
