@@ -21,7 +21,8 @@ public class Game {
     public ArrayList<Thread> botThreadsList = new ArrayList<Thread>();
     
 
-	public int turnCounter;
+    public Player actualPlayer;
+	public int turnCounter=0;
 	public boolean findOppoments=false;
 	public int realPLayers_ammount=1;
 	public int bots_ammount=0;
@@ -56,6 +57,11 @@ public class Game {
 		if(this.normalPlayerList.size()==0)
 			return false;
 		return true;
+	}
+	
+	public void nextPlayerTurn(){
+		turnCounter=(turnCounter+1)%playerList.size();
+		actualPlayer=playerList.get(turnCounter);
 	}
 	
 }

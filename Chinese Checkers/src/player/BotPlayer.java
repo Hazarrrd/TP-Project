@@ -13,12 +13,9 @@ class BOTPlayer extends Player implements Runnable {
     	 * @param color
     	 * @param game
     	 */
-    	public BOTPlayer(Color color, Game game) {
+    	public BOTPlayer(Game game) {
             super();
-            this.game=game;
-            this.color=color;  
-            game.playerList.add(this);
-            game.botList.add(this);
+            this.game=game; 
         }
     	
     	/**
@@ -26,7 +23,7 @@ class BOTPlayer extends Player implements Runnable {
     	 */
     	public void run() {
     			//wait for all players
-        		while(game.playerList.size()!=game.players_ammount){
+        		while(game.findOppoments==true){
         		//	try {
 						//this.wait();
 					//} catch (InterruptedException e) {

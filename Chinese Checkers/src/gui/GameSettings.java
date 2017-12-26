@@ -96,6 +96,7 @@ public class GameSettings extends JFrame implements ActionListener {
 				});
 				this.setVisible(false);
 				frame.setVisible(true);
+				frame.run(out, in);
 				break;
 			}
 			else
