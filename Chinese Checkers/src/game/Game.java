@@ -18,6 +18,7 @@ public class Game {
     public ArrayList<Player> playerList = new ArrayList<Player>();
     public ArrayList<Player> botList = new ArrayList<Player>();
     public ArrayList<Player> normalPlayerList = new ArrayList<Player>();
+    public ArrayList<Thread> botThreadsList = new ArrayList<Thread>();
     
 
 	public int turnCounter;

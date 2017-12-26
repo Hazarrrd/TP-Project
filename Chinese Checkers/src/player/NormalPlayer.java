@@ -37,7 +37,7 @@ public class NormalPlayer extends Player {
             				output.println("GAMESETTINGS");
             			}
             	}
-            	//Host set up the game (ammount of normal players and bot)
+            	//Player set up the game (ammount of normal players and bot)
             	while(stage=="GAMESETTINGS"){
             		String command = input.readLine();
             		if (command.startsWith("PLAYERAMMOUNT "))
@@ -66,7 +66,7 @@ public class NormalPlayer extends Player {
 		            					gamelist.addGame(game);
 		            					setColor(game);
 		            					game.connectPlayer(this);
-		            					//botMaker(game.bots_ammount);
+		            					botMaker(game.bots_ammount);
 		            					output.println("GAMEWINDOW");
 	            					}
 	            					else
@@ -84,8 +84,7 @@ public class NormalPlayer extends Player {
             		String command = input.readLine();
             		if (command.startsWith("QUIT")) {
             			game.disconnectPlayer(this);
-            			if(!(game.checkIfSomoneIs()))
-            				gamelist.removeGame(game);
+            			gameCleaner();
     					return;
     				}
             	}
@@ -112,8 +111,7 @@ public class NormalPlayer extends Player {
 	                    else 
 	                    	if (command.startsWith("QUIT")) {
 	                    		game.disconnectPlayer(this);
-	                			if(!(game.checkIfSomoneIs()))
-	                				gamelist.removeGame(game);
+	                			gameCleaner();
 	                    		return;
 	                    	}
                 	while(!game.shouldWePlay){
@@ -121,8 +119,7 @@ public class NormalPlayer extends Player {
                 			game.shouldWePlay=true;
                 		if (command.startsWith("QUIT")){
                 			game.disconnectPlayer(this);
-                			if(!(game.checkIfSomoneIs()))
-                				gamelist.removeGame(game);
+                			gameCleaner();
                     		return;
                 		}
                 	}
@@ -134,6 +131,16 @@ public class NormalPlayer extends Player {
                 try {socket.close();} catch (IOException e) {}
             }
         }
+
+		/**
+		 * Method delete game from gamelist and deletes threads.
+		 */
+		public void gameCleaner() {
+			if(!(game.checkIfSomoneIs())){
+				allBotStoper();
+				gamelist.removeGame(game);
+			}
+		}
 
 		/**
 		 * That class sets color for the player
@@ -148,27 +155,48 @@ public class NormalPlayer extends Player {
 		 * @param string Game name we are searching
 		 */
 		private void setGame(String string) {
-			if(gamelist.findGame(string)!=null){
+			if(gamelist.findGame(string)!=null)
+				if(isThereSlot(gamelist.findGame(string))){
 				game=gamelist.findGame(string);
 				setColor(game);
 				game.connectPlayer(this);
 				stage="GAMEWINDOW";
 				output.println("GOOD GAMENAME");
-			}
+				}
+				else
+					output.println("NO SLOT");
 			else
 				output.println("WRONG GAMENAME");
 				
 		}
 		
 		
+		private boolean isThereSlot(Game game) {
+				if(game.normalPlayerList.size()<game.realPLayers_ammount)
+					return true;
+				return false;
+		}
+
 		/**
 		 * This creates bot objects
 		 * @param botNumber number of expected bots
 		 */
 		private void botMaker(int botNumber) {
 			for(int j=0;j<botNumber;j++){
-				game.botList.add(new BOTPlayer(Color.values()[Color.values().length-j],game));
-				game.botList.get(j).run();
+				game.botList.add(new BOTPlayer(Color.values()[Color.values().length-j-1],game));
+				game.botThreadsList.add(new Thread(game.botList.get(j)));
+				game.playerList.add(game.botList.get(j));
 			}
+			for(int j=0;j<botNumber;j++)
+				game.botThreadsList.get(j).start();
 		}
+		/**
+		 * Method deletes threads
+		 */
+		private void allBotStoper() {
+			int size=game.botThreadsList.size();
+			for(int j=0;j<size;j++)
+				game.botThreadsList.remove(0);
+		}
+		
     }
