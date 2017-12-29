@@ -1,9 +1,11 @@
 package board;
 
 
+import java.io.ObjectOutputStream.PutField;
 import java.nio.channels.ShutdownChannelGroupException;
 
 import clientserver.Client;
+import fields.Checker;
 import fields.EmptyField;
 import fields.Field;
 import fields.NullField;
@@ -11,27 +13,139 @@ import game.Color;
 
 public class Board {
 	
-	public static final int WIDTH = 13;
-	public static final int HEIGHT = 17;
+	public int width ;
+	public int height;
+	public Field[][] board;
+	public int side;
+	public int playerNumber;
 	
-	private static final int[] STAR = {1,2,3,4,13,12,11,10,9,10,11,12,12,4,3,2,1};
+	Board(int side,int playerNumber){
+		this.playerNumber=playerNumber;
+		this.side=side;
+		this.width=(side-2)+2*side;
+		this.height=4*side-3;
+		this.board=makeEmptyBoard(this.side);
+		putCheckers();
+	}
 	
-	private static final int[] OTHER = {6,5,5,4,0,0,1,1,2,1,1,0,0,4,5,5,6};
+	private void putCheckers() {
+		switch (playerNumber){
+		case 2 :
+			fillerFirst(0);
+			fillerFourth(1);
+			break;
+		case 3 :
+			fillerFirst(0);
+			fillerThird(1);
+			fillerFifth(2);
+			
+			break;
+		case 4 :
+			fillerSecond(0);
+			fillerThird(1);
+			fillerFifth(2);
+			fillerSixth(3);
+			break;
+		case 6 :
+			fillerFirst(0);
+			fillerSecond(1);
+			fillerThird(2);
+			fillerFourth(3);
+			fillerFifth(4);
+			fillerSixth(5);
+			break;
+		}
+	}
 	
-	private final Color[][] grid;
+	public void fillerFirst(int color) {
+		for(int i=0;i<side-1;i++)
+			for(int j=0; j<width;j++)
+				if(board[i][j].kindOfField==1)
+					board[i][j]=new Checker(Color.values()[color]);
+	}
 	
-	Board(){
-		grid = new Color[HEIGHT][];
-		for(int y = 0; y< HEIGHT; y++)
-			grid[y] = new Color[STAR[y]];
+	public void fillerSecond(int color) {
+		int counter=0;
+		int limit=side-1;
+		int j=1;
+		for(int i=side-1;i<2*(side-1); i++){
+			while(counter<limit){
+				if(board[i][width-j].kindOfField==1){
+					board[i][width-j]=new Checker(Color.values()[color]);
+					counter++;
+				}
+				j++;
+			}
+			counter=0;
+			limit--;
+			j=1;
+		}
 		
 	}
-	
-	Board(Board board) {
-		grid = board.grid;
+
+	public void fillerThird(int color) {
+		int counter=0;
+		int limit=1;
+		int j=1;
+		for(int i=2*side-1;i<3*side-2;i++){
+			while(counter<limit){
+				if(board[i][width-j].kindOfField==1){
+					board[i][width-j]=new Checker(Color.values()[color]);
+					counter++;
+				}
+				j++;
+			}
+			counter=0;
+			limit++;
+			j=1;
+		}
 	}
 	
-	public static Field[][] makeBoard (int side){
+	public void fillerFourth(int color) {
+		for(int i=0;i<side-1;i++)
+			for(int j=0; j<width;j++)
+				if(board[height-1-i][j].kindOfField==1)
+					board[height-1-i][j]=new Checker(Color.values()[color]);
+	}
+	
+	public void fillerFifth(int color) {
+		int counter=0;
+		int limit=1;
+		int j=0;
+		for(int i=2*side-1;i<3*side-2;i++){
+			while(counter<limit){
+				if(board[i][j].kindOfField==1){
+					board[i][j]=new Checker(Color.values()[color]);
+					counter++;
+				}
+				j++;
+			}
+			counter=0;
+			limit++;
+			j=0;
+		}
+	}
+	
+	public void fillerSixth(int color) {
+		int counter=0;
+		int limit=side-1;
+		int j=0;
+		for(int i=side-1;i<2*(side-1); i++){
+			while(counter<limit){
+				if(board[i][j].kindOfField==1){
+					board[i][j]=new Checker(Color.values()[color]);
+					counter++;
+				}
+				j++;
+			}
+			counter=0;
+			limit--;
+			j=0;
+		}
+	}
+	
+
+	public static Field[][] makeEmptyBoard (int side){
 		int height=4*side-3;
 		int width=(side-2)+2*side;
 		int nullFields,freeFields;
@@ -96,7 +210,6 @@ public class Board {
 	public static void showBoard(Field[][] board, int side){
 		int height=4*side-3;
 		int width=(side-2)+2*side;
-		Field field;
 		for(int i=0;i<height;i++){
 			for(int j=0;j<width;j++)
 				switch(board[i][j].kindOfField){
@@ -116,8 +229,9 @@ public class Board {
 	}
 	
 	
-	// public static void main(String[] args) throws Exception {
-		// /showBoard(makeBoard(3),3);
+	 public static void main(String[] args) throws Exception {
+		 Board board = new Board(5,6);
+		 showBoard(board.board,5);
 	     	
-	  //  }
+	    }
 }
