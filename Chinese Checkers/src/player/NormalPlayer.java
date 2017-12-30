@@ -64,6 +64,7 @@ public class NormalPlayer extends Player {
 		            					stage="GAMEWINDOW";
 		            					game.players_ammount=game.bots_ammount+game.realPLayers_ammount;
 		            					game.setGameName(command.substring(14));
+		            					game.makeBoard();
 		            					gamelist.addGame(game);	            					
 		            					game.connectPlayer(this);
 		            					botMaker(game.bots_ammount);
@@ -108,12 +109,15 @@ public class NormalPlayer extends Player {
                 	String command = input.readLine();
                 	if(game.playerList.size()==1)
                 		output.println("DEFEAT");
-                	if(command.startsWith("MOVE FROM"))
-                		actualLocation = Integer.parseInt(command.substring(10));
+                	if(command.startsWith("MOVE FROM")){
+                		X1 = Integer.parseInt(command.substring(10));
+                		Y1 = Integer.parseInt(command.substring(10));
+                	}
                 	else
 	                    if (command.startsWith("MOVE TO")) {
-	                        int locationTO = Integer.parseInt(command.substring(8));
-	                        if (isMoveLegal(actualLocation,locationTO, this)) {
+	                        int X2 = Integer.parseInt(command.substring(8));
+	                        int Y2 = Integer.parseInt(command.substring(8));
+	                        if (isMoveLegal(X1,Y1,X2,Y2, this)) {
 	                            output.println("VALID_MOVE");
 	                            if(didPlayerWon(this))
 	                            	output.println("VICTORY");

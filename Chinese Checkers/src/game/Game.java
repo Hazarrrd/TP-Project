@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import board.Board;
 import player.*;
 
 
@@ -30,6 +31,8 @@ public class Game {
 	public int players_ammount;
 	public boolean shouldWePlay=true;
 	private String gameName;
+	
+	public Board board;
 	
 	public void setGameName(String string){
 		this.gameName=string;
@@ -62,6 +65,11 @@ public class Game {
 	public void nextPlayerTurn(){
 		turnCounter=(turnCounter+1)%playerList.size();
 		actualPlayer=playerList.get(turnCounter);
+	}
+
+	public void makeBoard() {
+		this.board=new Board(5,this.players_ammount);
+		
 	}
 	
 }

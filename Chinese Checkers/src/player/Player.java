@@ -23,7 +23,7 @@ public abstract class Player extends Thread {
     Socket socket;
     BufferedReader input;
     PrintWriter output;
-    int actualLocation;
+    int X1,Y1;
     Game game;
     GameList gamelist;
 
@@ -54,9 +54,8 @@ public abstract class Player extends Thread {
      * @param player
      * @return true if Move is legal, false if not.
      */
-    protected boolean isMoveLegal(int actualLocation, int locationTO, Player player) {
-		// TODO Auto-generated method stub
-		return false;
+    protected boolean isMoveLegal(int X1, int Y1, int X2, int Y2, Player player) {
+		return this.game.board.isMoveLegal(X1, Y1, X2, Y2, player.color);
 	}
     
     /**
@@ -65,8 +64,8 @@ public abstract class Player extends Thread {
      * @param locationTO
      * @param player
      */
-    protected void checkerMove(int actualLocation, int locationTO, Player player) {
-		// TODO Auto-generated method stub
+    protected void checkerMove(int X1, int Y1, int X2, int Y2) {
+		this.game.board.doMove(X1, Y1, X2, Y2);
 	}
     
     /**
