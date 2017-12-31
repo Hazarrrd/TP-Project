@@ -30,7 +30,7 @@ public class Board {
 		this.playerNumber=playerNumber;
 		this.side=side;
 		this.width=(side-2)+2*side;
-		this.height=4*side-3;
+ 		this.height=4*side-3;
 		this.board=makeEmptyBoard(this.side);
 		putCheckers();
 	}
@@ -54,12 +54,14 @@ public class Board {
 		if(checker.kindOfField!=2)
 			return false;
 		else
-			if(checker.color!=color)
+			if(checker.color!=color){
+				System.out.println(checker.color);
 				return false;
-		
+			}
 		if(areTheyNeighbours(target,checker))
 			return true;
 		else{
+			System.out.println("xd");
 			ArrayList<Field> neighbours= giveNeighbours(checker);
 			for(int i=0;i < neighbours.size(); i++){
 				if(neighbours.get(i).kindOfField==2)
@@ -80,7 +82,7 @@ public class Board {
 	 */
 	private ArrayList<Field> giveNeighbours(Field target) {
 		ArrayList<Field> neighbours = new ArrayList<Field>();
-		
+		//System.out.println(target.color);
 		if(target.X1%2==1){
 			if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1+1][target.Y1],target.target))
 				giveNeighbourToArray(target.X1+1,target.Y1, neighbours);
@@ -132,10 +134,10 @@ public class Board {
 	 * @return
 	 */
 	private boolean areTheyNeighbours(Field target, Field checker) {
-		ArrayList<Field> neighbours= giveNeighbours(target);
-		
+		ArrayList<Field> neighbours= giveNeighbours(checker);
+		System.out.println(neighbours.size());
 		for(int i=0;i < neighbours.size(); i++)
-			if(neighbours.get(i).equals(checker))
+			if(neighbours.get(i).equals(target))
 				return true;
 		return false;		
 	}
@@ -376,7 +378,11 @@ public class Board {
 	 */
 	public Boolean checkIfInTarget(Field checker) {
 
-		return checkIfInTriangle(checker, checker.target);
+		if(checkIfInTriangle(checker, checker.target)){
+			checker.reachedTarget=true;
+			return true;
+		}
+		return false;
 	}
 	
 	public Boolean checkIfInTriangle(Field checker, int Triangle) {
@@ -409,7 +415,6 @@ public class Board {
 	public Boolean checkIfInTargetHelper(Field checker, ArrayList<Field> triangle) {
 		for(int i=0;i < triangle.size(); i++)
 		if(triangle.get(i).equals(checker)){
-			checker.reachedTarget=true;
 			return true;
 		}
 		return false;
@@ -512,9 +517,14 @@ public class Board {
 	
 	 public static void main(String[] args) throws Exception {
 		 Board board = new Board(5,6);
+		 //board.doMove(13, 4, 5, 7);
+		// board.doMove(3, 4, 13, 4);
+		//board.doMove(13, 4, 12, 4);
+		 if(board.isMoveLegal(13,5,12,5,Color.values()[3]))
+		 {
 		 showBoard(board.board,5);
 		 board.doMove(5, 6, 5, 6);
-	     	
+		 }	
 	    }
 
 }
