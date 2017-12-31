@@ -4,7 +4,6 @@ import game.Color;
 
 public class Checker extends NotNullField {
 	
-	public Color color;
 
 	public Checker(Color color,int X1, int Y1, int target){
 		super(X1,Y1);
