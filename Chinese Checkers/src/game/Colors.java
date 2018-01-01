@@ -4,7 +4,7 @@ package game;
  * @author Janek
  *Enum of player's colors
  */
-public enum Color {
+public enum Colors {
 	GREEN,
 	YELLOW,
 	RED,

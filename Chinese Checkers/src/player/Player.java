@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import game.Color;
+import game.Colors;
 import game.Game;
 import game.GameList;
 
@@ -18,7 +18,7 @@ import game.GameList;
 	 */
 public abstract class Player extends Thread {
 
-	Color color;
+	Colors color;
     Player opponent;
     Socket socket;
     BufferedReader input;

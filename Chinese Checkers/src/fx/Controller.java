@@ -1,4 +1,4 @@
-package gui;
+package fx;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;

@@ -4,7 +4,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import game.Color;
+import game.Colors;
 import game.Game;
 import game.GameList;
 
@@ -165,7 +165,7 @@ public class NormalPlayer extends Player {
 		 */
 		private void setColors(ArrayList<Player> playerList) {
 			for(int i=0;i<playerList.size();i++)
-			playerList.get(i).color=Color.values()[i];
+			playerList.get(i).color=Colors.values()[i];
 		}
 
 		/**

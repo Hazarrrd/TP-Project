@@ -1,5 +1,5 @@
 package player;
-import game.Color;
+import game.Colors;
 import game.Game;
 /**
  * Class represent BOTplayer, extends abstract clas Player

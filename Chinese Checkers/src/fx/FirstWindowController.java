@@ -1,4 +1,4 @@
-package gui;
+package fx;
 
 /**
  * Created by lenovo on 28.12.2017.

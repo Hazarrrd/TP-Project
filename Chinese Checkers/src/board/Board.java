@@ -10,7 +10,7 @@ import fields.Checker;
 import fields.EmptyField;
 import fields.Field;
 import fields.NullField;
-import game.Color;
+import game.Colors;
 import player.Player;
 
 /**
@@ -44,7 +44,7 @@ public class Board {
 	 * @param color
 	 * @return
 	 */
-	public boolean isMoveLegal(int x1, int y1, int x2, int y2, Color color) {
+	public boolean isMoveLegal(int x1, int y1, int x2, int y2, Colors color) {
 		Field target = board[x2][y2];
 		Field checker = board[x1][y1];
 		
@@ -188,7 +188,7 @@ public class Board {
 		for(int i=0;i<side-1;i++)
 			for(int j=0; j<width;j++)
 				if(board[i][j].kindOfField!=0)
-					board[i][j]=new Checker(Color.values()[color],i,j,4);
+					board[i][j]=new Checker(Colors.values()[color],i,j,4);
 	}
 	
 	public void fillerSecond(int color) {
@@ -198,7 +198,7 @@ public class Board {
 		for(int i=side-1;i<2*(side-1); i++){
 			while(counter<limit){
 				if(board[i][width-j].kindOfField!=0){
-					board[i][width-j]=new Checker(Color.values()[color],i,width-j,5);
+					board[i][width-j]=new Checker(Colors.values()[color],i,width-j,5);
 					counter++;
 				}
 				j++;
@@ -217,7 +217,7 @@ public class Board {
 		for(int i=2*side-1;i<3*side-2;i++){
 			while(counter<limit){
 				if(board[i][width-j].kindOfField!=0){
-					board[i][width-j]=new Checker(Color.values()[color],i,width-j,6);
+					board[i][width-j]=new Checker(Colors.values()[color],i,width-j,6);
 					counter++;
 				}
 				j++;
@@ -232,7 +232,7 @@ public class Board {
 		for(int i=0;i<side-1;i++)
 			for(int j=0; j<width;j++)
 				if(board[height-1-i][j].kindOfField!=0)
-					board[height-1-i][j]=new Checker(Color.values()[color],height-1-i,j,1);
+					board[height-1-i][j]=new Checker(Colors.values()[color],height-1-i,j,1);
 	}
 	
 	public void fillerFifth(int color) {
@@ -242,7 +242,7 @@ public class Board {
 		for(int i=2*side-1;i<3*side-2;i++){
 			while(counter<limit){
 				if(board[i][j].kindOfField!=0){
-					board[i][j]=new Checker(Color.values()[color],i,j,2);
+					board[i][j]=new Checker(Colors.values()[color],i,j,2);
 					counter++;
 				}
 				j++;
@@ -260,7 +260,7 @@ public class Board {
 		for(int i=side-1;i<2*(side-1); i++){
 			while(counter<limit){
 				if(board[i][j].kindOfField!=0){
-					board[i][j]=new Checker(Color.values()[color],i,j,3);
+					board[i][j]=new Checker(Colors.values()[color],i,j,3);
 					counter++;
 				}
 				j++;
@@ -520,7 +520,7 @@ public class Board {
 		 //board.doMove(13, 4, 5, 7);
 		// board.doMove(3, 4, 13, 4);
 		//board.doMove(13, 4, 12, 4);
-		 if(board.isMoveLegal(13,5,12,5,Color.values()[3]))
+		 if(board.isMoveLegal(13,5,12,5,Colors.values()[3]))
 		 {
 		 showBoard(board.board,5);
 		 board.doMove(5, 6, 5, 6);
