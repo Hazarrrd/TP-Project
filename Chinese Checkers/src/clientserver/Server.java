@@ -1,7 +1,7 @@
 package clientserver;
 import java.net.ServerSocket;
 
-import game.Color;
+import game.Colors;
 import game.GameList;
 import player.NormalPlayer;
 

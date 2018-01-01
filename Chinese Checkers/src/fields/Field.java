@@ -1,11 +1,18 @@
 package fields;
 
-import game.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Window;
+import java.awt.geom.Ellipse2D;
 
-public abstract class Field {
+import javax.swing.JPanel;
+
+import game.Colors;
+
+public abstract class Field extends JPanel {
 	
 	public int kindOfField;
-	public Color color;
+	public Colors color;
 	public int X1;
 	public int Y1;
 	public Boolean reachedTarget=false;
@@ -14,4 +21,11 @@ public abstract class Field {
 	public void updatePosition(int x2, int y2) {
 	}
 
+	@Override
+	protected void paintComponent(Graphics g) {
+ 
+	}
+
+
+	
 }
