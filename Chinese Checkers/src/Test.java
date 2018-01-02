@@ -1,9 +1,10 @@
-package board;
 
+
+import board.Board;
 import fields.Checker;
 import fields.EmptyField;
 import fields.Field;
-import game.Color;
+import game.Colors;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
@@ -11,7 +12,7 @@ import junit.framework.TestCase;
  * Created by lenovo on 01.01.2018.
  */
 public class Test extends TestCase {
-    int side = 6;
+    int side = 5;
     int width = (side-2)+2*side;
     int height = 4*side-3;
 
@@ -32,9 +33,9 @@ public class Test extends TestCase {
 
     public void testMoveIsLegal() {
 
-        board1.isMoveLegal(1, 7, 2, 7, Color.GREEN);
-        Assert.assertEquals(false, board1.isMoveLegal(1, 7, 2, 7, Color.GREEN));
-        Assert.assertEquals(false, board1.isMoveLegal(1, 7, 1, 1, Color.GREEN));
+        board1.isMoveLegal(1, 7, 2, 7, Colors.GREEN);
+        Assert.assertEquals(false, board1.isMoveLegal(1, 7, 2, 7, Colors.GREEN));
+        Assert.assertEquals(false, board1.isMoveLegal(1, 7, 1, 1, Colors.GREEN));
 
     }
 
@@ -53,7 +54,7 @@ public class Test extends TestCase {
 
         boolean move = false;
 
-        b1[4][7] = new Checker(Color.GREEN, 4, 7, 1);
+        b1[4][7] = new Checker(Colors.GREEN, 4, 7, 1);
         if(b1[4][7].kindOfField == 2) {
             board1.doMove(4,7,5,7);
             move = true;
@@ -147,22 +148,15 @@ public class Test extends TestCase {
 
     public void testCheckIfInTargetHelper() {
         //nie jest dobry i nie wiem co zmienic zeby bylo
-        Field[][] b1 = new Field[width][height];
-
-        for(int i=0;i<side;i++) {
-            for (int j = 0; j < width; j++) {
-                b1[i][j] = new EmptyField(i, j);
-            }
-        }
-
+        
         boolean is = false;
-
-        b1[4][7] = new Checker(Color.GREEN, 4, 7, 1);
-        board1.checkIfInTargetHelper(b1[4][7], board1.arrayFirst());
-
-        if(b1[4][7].reachedTarget = true)
+       // System.out.println(b1[3][7].reachedTarget);
+        board1.board[3][7] = new Checker(Colors.GREEN, 3, 7, 1);
+        board1.checkIfInTarget(board1.board[3][7]);
+     
+        if(board1.board[3][7].reachedTarget == true)
             is = true;
-
+       
         Assert.assertTrue("m", is);
 
     }
