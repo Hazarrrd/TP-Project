@@ -26,17 +26,23 @@ public class GameSettings extends JFrame implements ActionListener {
 	private JButton start;
 	private JLabel botNumberLabel;
 	private JLabel normalPlayerLabel;
+	private JLabel boardSizeLabel;
 	private JTextArea tekst;
 	private JComboBox setBotNumber;
 	private JComboBox setNormalPlayers;
+	private JComboBox setBoardSize;
 	private String[] botNumber = { "0", "1", "2", "3", "4", "5" };
 	private String[] normalPlayersNumber = { "1", "2", "3", "4", "5","6" };
-	JPanel menu = new JPanel(new GridLayout(4,2));
+	private String[] boardSize = { "S", "M", "L", "XL", "XXL" };
+	JPanel menu = new JPanel(new GridLayout(5,2));
 	private JLabel gameNameLabel;
 	private JTextField setGameName;
 	
 	private PrintWriter out;
 	private BufferedReader in;
+	
+	private int ammountOfPlayers;
+	private int bordSize;
 	
 	//konstruktor
 	public GameSettings(PrintWriter out, BufferedReader in) {
@@ -49,17 +55,22 @@ public class GameSettings extends JFrame implements ActionListener {
 		botNumberLabel = new JLabel("Set ammount of bots");
 		normalPlayerLabel = new JLabel("Set ammount of real players");
 		gameNameLabel = new JLabel("Set gameName");
+		boardSizeLabel = new JLabel("Set board size");
 		tekst= new JTextArea("Remember that this is game for 2,3,4 or 6 players");
 		tekst.setEditable(false);
 		setGameName=new JTextField("");
 		setBotNumber = new JComboBox(botNumber);
 		setNormalPlayers = new JComboBox(normalPlayersNumber);
+		setBoardSize = new JComboBox(boardSize);
+		setBoardSize.setSelectedItem("XL");
 		
 		this.add(menu);
 		menu.add(normalPlayerLabel);
 		menu.add(setNormalPlayers);
 		menu.add(botNumberLabel);
 		menu.add(setBotNumber);
+		menu.add(boardSizeLabel);
+		menu.add(setBoardSize);
 		menu.add(gameNameLabel);
 		menu.add(setGameName);
 		menu.add(start);
@@ -84,7 +95,7 @@ public class GameSettings extends JFrame implements ActionListener {
 				response = in.readLine();
 				System.out.println(response);
 			if(response.equals("GAMEWINDOW")){
-				Window frame = new Window(3);
+				Window frame = new Window(ammountOfPlayers,out, in, bordSize);
 				frame.setTitle("Chinese checkers : " + setGameName.getText());
 				
 				frame.addWindowListener( new WindowAdapter() {
@@ -96,7 +107,7 @@ public class GameSettings extends JFrame implements ActionListener {
 				});
 				this.setVisible(false);
 				frame.setVisible(true);
-				frame.run(out, in);
+				frame.run();
 				break;
 			}
 			else
@@ -113,12 +124,14 @@ public class GameSettings extends JFrame implements ActionListener {
 	
 		int botAmmount=setBotNumber.getSelectedIndex();
 		int normalPlayerAmmount=setNormalPlayers.getSelectedIndex()+1;
-		int ammountOfPlayers=botAmmount+normalPlayerAmmount;
+		bordSize=setBoardSize.getSelectedIndex()+2;
+		ammountOfPlayers=botAmmount+normalPlayerAmmount;
 		String gameNameString=setGameName.getText();
 		
 		if(!(gameNameString.equals(""))){
 			out.println("PLAYERAMMOUNT " + Integer.toString(normalPlayerAmmount));
 			out.println("BOTSAMMOUNT " + Integer.toString(botAmmount));
+			out.println("BOARDSIZE " + Integer.toString(bordSize));
 			out.println("FINDOPPOMENTS " + gameNameString);
 		}
 		else

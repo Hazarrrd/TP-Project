@@ -33,6 +33,7 @@ public class Game {
 	private String gameName;
 	
 	public Board board;
+	public int boardSize;
 	
 	public void setGameName(String string){
 		this.gameName=string;
@@ -68,7 +69,7 @@ public class Game {
 	}
 
 	public void makeBoard() {
-		this.board=new Board(5,this.players_ammount);
+		this.board=new Board(boardSize,this.players_ammount);
 		
 	}
 	

@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import game.Colors;
 import game.Game;
@@ -58,28 +59,39 @@ public class NormalPlayer extends Player {
             					output.println("MESSAGE Bad ammount");
             				} 
             			else
-            				if (command.startsWith("FINDOPPOMENTS "))
-            					if((game.realPLayers_ammount+game.bots_ammount)>=2 && (game.realPLayers_ammount+game.bots_ammount)<=6 && (game.realPLayers_ammount+game.bots_ammount)!=5 ) {
-	            					if(gamelist.isNameFree(command.substring(14))){
-		            					stage="GAMEWINDOW";
-		            					game.players_ammount=game.bots_ammount+game.realPLayers_ammount;
-		            					game.setGameName(command.substring(14));
-		            					game.makeBoard();
-		            					gamelist.addGame(game);	            					
-		            					game.connectPlayer(this);
-		            					botMaker(game.bots_ammount);
-		            					startGameIfAllIn();
-		            					output.println("GAMEWINDOW");
+            				if (command.startsWith("BOARDSIZE "))
+                				try{
+                					game.boardSize = Integer.parseInt(command.substring(10));
+                				}
+                				catch(NumberFormatException e){
+                		
+                					output.println("MESSAGE Bad ammount");
+                				} 
+            				else
+	            				if (command.startsWith("FINDOPPOMENTS "))
+	            					if((game.realPLayers_ammount+game.bots_ammount)>=2 && (game.realPLayers_ammount+game.bots_ammount)<=6 && (game.realPLayers_ammount+game.bots_ammount)!=5 ) {
+		            					if(gamelist.isNameFree(command.substring(14))){
+			            					stage="GAMEWINDOW";
+			            					game.players_ammount=game.bots_ammount+game.realPLayers_ammount;
+			            					game.setGameName(command.substring(14));
+			            					System.out.println("afasdfasd");
+			            					game.makeBoard();
+			            					gamelist.addGame(game);	            					
+			            					game.connectPlayer(this);
+			            					botMaker(game.bots_ammount);
+			            					startGameIfAllIn();
+			            					System.out.println("ha");
+			            					output.println("GAMEWINDOW");
+		            					}
+		            					else
+		            						output.println("MESSAGE Game name is already used");
 	            					}
 	            					else
-	            						output.println("MESSAGE Game name is already used");
-            					}
-            					else
-            						output.println("MESSAGE Wrong data");
-            				else if (command.startsWith("QUIT")) {
-            					return;
-            				}
-            	}
+	            						output.println("MESSAGE Wrong data");
+	            				else if (command.startsWith("QUIT")) {
+	            					return;
+	            				}
+	            	}
             	
             	//wait for all players
             	while(game.playerList.size()!=game.players_ammount && !(game.findOppoments)){
@@ -109,31 +121,41 @@ public class NormalPlayer extends Player {
                 	String command = input.readLine();
                 	if(game.playerList.size()==1)
                 		output.println("DEFEAT");
-                	if(command.startsWith("MOVE FROM")){
-                		X1 = Integer.parseInt(command.substring(10));
-                		Y1 = Integer.parseInt(command.substring(10));
-                	}
                 	else
-	                    if (command.startsWith("MOVE TO")) {
-	                        int X2 = Integer.parseInt(command.substring(8));
-	                        int Y2 = Integer.parseInt(command.substring(8));
-	                        if (isMoveLegal(X1,Y1,X2,Y2, this)) {
-	                            output.println("VALID_MOVE");
-	                            if(didPlayerWon(this))
-	                            	output.println("VICTORY");
-	                            	game.shouldWePlay=false;
-	                        } 
-	                        else {
-	                            output.println("MESSAGE ?");
-	                        }
-	                    } 
-	                    else 
-	                    	if (command.startsWith("QUIT")) {
-	                    		game.disconnectPlayer(this);
-	                			gameCleaner();
-	                    		return;
-	                    	}	
-                }
+                		if(command.equals("END TURN")){
+                			game.turnCounter=(game.turnCounter+1)%game.players_ammount;
+                			if(game.turnCounter<game.realPLayers_ammount)
+                				game.normalPlayerList.get(game.turnCounter).output.println("YOUR TURN");
+                		}
+	                	else
+		                    if (command.startsWith("DO MOVE ")) {
+		                    	System.out.println("aa");
+		                    	String[] parts=command.split(";");
+		                    	System.out.println(parts[1] + "xxx " + parts[4]);
+		                       // if (isMoveLegal(Integer.parseInt(parts[1]),Integer.parseInt(parts[2]),Integer.parseInt(parts[3]),Integer.parseInt(parts[4]), this)) {
+		                        	System.out.println("o tutaj2");
+		                        	checkerMove(Integer.parseInt(command.split(";")[1]),Integer.parseInt(command.split(";")[2]),Integer.parseInt(command.split(";")[3]),Integer.parseInt(command.split(";")[4]));
+		                            System.out.println("o tutaj3");
+		                            for(int i=0;i<game.normalPlayerList.size();i++)
+		                            	if(!game.normalPlayerList.get(i).equals(this)){
+		                            		game.normalPlayerList.get(i).output.println(command);
+		                            		System.out.println("o tutaj4");
+		                            	}
+		                            if(didPlayerWon(this))
+		                            	output.println("VICTORY");
+		                            	game.shouldWePlay=false;
+		                        //} 
+		                      //  else {
+		                          //  output.println("MESSAGE ?");
+		                       // }
+		                    } 
+		                    else 
+		                    	if (command.startsWith("QUIT")) {
+		                    		game.disconnectPlayer(this);
+		                			gameCleaner();
+		                    		return;
+		                    	}	
+	                }
             } catch (IOException e) {
                 System.out.println("Player died: " + e);
             } finally {
@@ -154,8 +176,16 @@ public class NormalPlayer extends Player {
 				setColors(game.playerList);
 				game.actualPlayer=game.playerList.get(game.turnCounter);
 				game.findOppoments=true;
-				for(int i=0;i<game.normalPlayerList.size()-1;i++)
+				for(int i=0;i<game.normalPlayerList.size();i++)
+					game.normalPlayerList.get(i).output.println("COLOR " + i);
+				for(int i=0;i<game.normalPlayerList.size();i++)
 						game.normalPlayerList.get(i).output.println("START GAME");
+				
+				Random ran = new Random();
+				int x = ran.nextInt(game.players_ammount)+100;
+				game.turnCounter=x%game.players_ammount;
+    			if(game.turnCounter<game.realPLayers_ammount)
+    				game.normalPlayerList.get(game.turnCounter).output.println("YOUR TURN");
 			}
 		}
 
@@ -186,11 +216,11 @@ public class NormalPlayer extends Player {
 		private void setGame(String string) {
 			if(gamelist.findGame(string)!=null)
 				if(isThereSlot(gamelist.findGame(string))){
-				game=gamelist.findGame(string);
-				game.connectPlayer(this);
-				stage="GAMEWINDOW";
-				startGameIfAllIn();
-				output.println("GOOD GAMENAME");
+					game=gamelist.findGame(string);
+					game.connectPlayer(this);
+					stage="GAMEWINDOW";
+					output.println("GOOD GAMENAME " + game.players_ammount + " " + game.boardSize);
+					startGameIfAllIn();
 				}
 				else
 					output.println("NO SLOT");

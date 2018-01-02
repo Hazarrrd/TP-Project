@@ -1,5 +1,6 @@
 package fields;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Window;
@@ -15,8 +16,11 @@ public abstract class Field extends JPanel {
 	public Colors color;
 	public int X1;
 	public int Y1;
+	public Boolean duringLongJump=false;
+	public Boolean firstMove=true;
 	public Boolean reachedTarget=false;
 	public int target;
+	public Boolean checked=false;
 
 	public void updatePosition(int x2, int y2) {
 	}

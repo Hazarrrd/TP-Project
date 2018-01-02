@@ -55,13 +55,13 @@ public class Board {
 			return false;
 		else
 			if(checker.color!=color){
-				System.out.println(checker.color);
+				//System.out.println(checker.color);
 				return false;
 			}
-		if(areTheyNeighbours(target,checker))
+		if(areTheyNeighbours(target,checker) && checker.firstMove)
 			return true;
-		else{
-			System.out.println("xd");
+		else if(checker.firstMove || checker.duringLongJump){
+			//System.out.println("xd");
 			ArrayList<Field> neighbours= giveNeighbours(checker);
 			for(int i=0;i < neighbours.size(); i++){
 				if(neighbours.get(i).kindOfField==2)
@@ -135,7 +135,7 @@ public class Board {
 	 */
 	private boolean areTheyNeighbours(Field target, Field checker) {
 		ArrayList<Field> neighbours= giveNeighbours(checker);
-		System.out.println(neighbours.size());
+		//System.out.println(neighbours.size());
 		for(int i=0;i < neighbours.size(); i++)
 			if(neighbours.get(i).equals(target))
 				return true;
@@ -147,8 +147,11 @@ public class Board {
 	 * @return
 	 */
 	public void doMove(int X1, int Y1, int X2, int Y2 ) {
+		if(!areTheyNeighbours(this.board[X2][Y2],this.board[X1][Y1] ))
+			this.board[X1][Y1].duringLongJump=true;
 		this.board[X2][Y2]=this.board[X1][Y1];
 		this.board[X2][Y2].updatePosition(X2,Y2);
+		this.board[X2][Y2].firstMove=false;
 		checkIfInTarget(this.board[X2][Y2]);
 		this.board[X1][Y1]=new EmptyField(X1,Y1);
 	}
@@ -434,7 +437,8 @@ public class Board {
 		Field[][] Board = new Field[height][width];
 		//first part
 		for(int i=0;i<side-1;i++){
-			freeFields=i+1;
+			freeFields=i+1;			
+			//if(side%2!=0)
 			nullFields=(width-freeFields)/2;
 			for(int j=0;j<nullFields;j++){
 				Board[i][j]=new NullField();
@@ -443,10 +447,17 @@ public class Board {
 				Board[i][width-1-j]=new NullField();
 				Board[height-1-i][width-1-j]=new NullField();
 			}
-			if(i%2==1){
-				Board[i][width-1-nullFields]=new NullField();
-				Board[height-1-i][width-1-nullFields]=new NullField();
+			if(side%2!=0){
+				if(i%2==1){
+					Board[i][width-1-nullFields]=new NullField();
+					Board[height-1-i][width-1-nullFields]=new NullField();
+				}
 			}
+			else
+				if(i%2==0){
+					Board[i][width-1-nullFields]=new NullField();
+					Board[height-1-i][width-1-nullFields]=new NullField();
+				}
 			for(int z=nullFields;z<nullFields+freeFields;z++){
 				Board[i][z]=new EmptyField(i,z);
 				Board[height-1-i][z]=new EmptyField(height-1-i,z);
@@ -464,10 +475,17 @@ public class Board {
 				Board[i][width-1-j]=new NullField();
 				Board[height-1-i][width-1-j]=new NullField();
 			}
-			if(i%2==1){
-				Board[i][width-1-nullFields]=new NullField();
-				Board[height-1-i][width-1-nullFields]=new NullField();
+			if(side%2!=0){
+				if(i%2==1){
+					Board[i][width-1-nullFields]=new NullField();
+					Board[height-1-i][width-1-nullFields]=new NullField();
+				}
 			}
+			else
+				if(i%2==0){
+					Board[i][width-1-nullFields]=new NullField();
+					Board[height-1-i][width-1-nullFields]=new NullField();
+				}
 			for(int z=nullFields;z<nullFields+freeFields;z++){
 				Board[i][z]=new EmptyField(i,z);
 				Board[height-1-i][z]=new EmptyField(height-1-i,z);
@@ -483,6 +501,10 @@ public class Board {
 		for(int z=nullFields;z<nullFields+freeFields;z++){
 			Board[2*side-2][z]=new EmptyField(2*side-2,z);
 		}
+		if(side%2==0)
+			for(int z=nullFields+freeFields;z<width;z++){
+				Board[2*side-2][z]=new NullField();
+			}
 		
 		return Board;
 		
@@ -516,15 +538,15 @@ public class Board {
 	
 	
 	 public static void main(String[] args) throws Exception {
-		 Board board = new Board(5,6);
+		 Board board = new Board(4,3);
 		 //board.doMove(13, 4, 5, 7);
 		// board.doMove(3, 4, 13, 4);
 		//board.doMove(13, 4, 12, 4);
-		 if(board.isMoveLegal(13,5,12,5,Colors.values()[3]))
-		 {
-		 showBoard(board.board,5);
-		 board.doMove(5, 6, 5, 6);
-		 }	
+		// if(board.isMoveLegal(13,5,12,5,Colors.values()[3]))
+		// {
+		 showBoard(board.board,4);
+		// board.doMove(5, 6, 5, 6);
+		// }	
 	    }
 
 }

@@ -100,8 +100,8 @@ public class Lobby extends JFrame {
 					if(response.equals("NO SLOT"))
 						tekst.setText("This game is full");
 					else
-						if(response.equals("GOOD GAMENAME")){
-							Window frame = new Window(3);
+						if(response.startsWith("GOOD GAMENAME")){
+							Window frame = new Window(Integer.parseInt(response.substring(14, 15)),out, in,Integer.parseInt(response.substring(16)));
 					
 							frame.setTitle("Chinese checkers : " + setGameName.getText());
 					
@@ -114,6 +114,7 @@ public class Lobby extends JFrame {
 								});
 							this.setVisible(false);
 							frame.setVisible(true);
+							frame.run();
 							break;
 						}
 						else
