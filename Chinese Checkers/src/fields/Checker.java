@@ -20,6 +20,7 @@ public class Checker extends NotNullField {
 		this.color=color;
 		this.target=target;
 		setPreferredSize(new Dimension(30,45));
+	//	this.setBackground(Color.gray);
 	}
 	
 	public void updatePosition(int X1, int Y1){
@@ -30,6 +31,14 @@ public class Checker extends NotNullField {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
+		
+		Ellipse2D circle = new Ellipse2D.Double(0, 15, 30, 30);
+		
+		if(checked){
+			g.setColor(Color.BLACK);
+			g2d.draw(circle);
+			g2d.fill(circle);
+		}
 		
 		switch(color){
 		
@@ -52,14 +61,11 @@ public class Checker extends NotNullField {
 			g.setColor(Color.PINK);
 			break;
 		}
-		// kolo
-		Ellipse2D circle = new Ellipse2D.Double(0, 15, 30, 30);
 
-		g2d.draw(circle);
-		g2d.fill(circle);
+		if(!checked){
+			g2d.draw(circle);
+			g2d.fill(circle);
+		}
 	}
-	
-	
-
-
 }
+	

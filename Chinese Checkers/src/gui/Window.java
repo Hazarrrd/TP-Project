@@ -18,6 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import board.Board;
+import fields.Field;
+import game.Colors;
 
 
 class Window extends Frame implements MouseListener, ActionListener {
@@ -32,44 +34,36 @@ class Window extends Frame implements MouseListener, ActionListener {
 	private JTextArea whosTurn;
 	private JTextArea communicate;
 	private JButton endTurn;
+	private int height;
+	private int width;
+	private Boolean isSomethingChecked=false;
+	Field checkedField;
 	
 	int type;
+	private int checkedX;
+	private int checkedY;
+	private boolean mouseListner=false;
+	private Colors myColor;
+	PrintWriter out;
+	BufferedReader in;
+	private boolean isYourTurn;
+	private int boardSize;
 	
-	public Window(int type) {
-		
+	public Window(int type, PrintWriter out, BufferedReader in, int size) {
+		this.out=out;
+		this.in=in;
+		this.boardSize=size;
 		//BOARD
-		data=new Board(5,6);
-		int height=data.height;
-		int width=data.width;
-		
+		data=new Board(size,type);
+		height=data.height;
+		width=data.width;
 		board = new JPanel(new GridLayout(height, width*2));
-		for (int x = 0; x < height; x++) {
-			for (int y = 0; y < width; y++) {
-						if(x%2==0){
-			                board.add(data.board[x][y]);
-			                if(data.board[x][y].kindOfField!=0){
-			                	data.board[x][y].addMouseListener(this);
-			                	data.board[x][y].repaint();
-			                }
-			                board.add(new JPanel());
-			   
-						}
-						else{
-							board.add(new JPanel());
-							 board.add(data.board[x][y]);
-							 if(data.board[x][y].kindOfField!=0){
-				                	data.board[x][y].addMouseListener(this);
-				                	data.board[x][y].repaint();
-				             }
-			                
-						}
-		            }
-		        }
+		painting();
 		//BUTTONS AND TEXT AREAS
 		labels = new JPanel(new GridLayout(4, 1));
 		
-		yourColor = new JLabel("Your color is");
-		whosTurn = new JTextArea("Now it is ... turn");
+		yourColor = new JLabel("Your color is :");
+		whosTurn = new JTextArea("It's not your turn, wait please");
 		whosTurn.setEditable(false);
 		communicate = new JTextArea("communicate");
 		communicate.setEditable(false);
@@ -101,28 +95,167 @@ class Window extends Frame implements MouseListener, ActionListener {
 	 //   add(output, BorderLayout.CENTER);
 	    
 	    setBounds(100,100,1000,900);
-	    //pack();
+	    this.setBackground(Color.GRAY);
+	    pack();
 	}
 	
-	public void run(PrintWriter out, BufferedReader in) {
+	public void run() {
 		String response;
-		while(true){
-			try {
-				response = in.readLine();
-			if(response.equals("START GAME")){
-				out.println("START GAME");
+		try {
+			for(int i=0;i<2;i++){
+						response = in.readLine();
+					if(response.equals("START GAME")){
+						out.println("START GAME");
+					}
+					else
+						if(response.startsWith("COLOR ")){
+							this.myColor=Colors.values()[Integer.parseInt(response.substring(6))];
+							yourColor.setText("Your color is : " + myColor.toString());
+							revalidate();
+						}
 			}
-			
-			} catch (IOException e1) {
-				e1.printStackTrace();
+					
+			while(true){	
+					response = in.readLine();
+					
+						if(response.equals("YOUR TURN")){
+							isYourTurn=true;
+							whosTurn.setText("Now this is your turn");
+							revalidate();
+						}
+						else
+							if(response.startsWith("DO MOVE ")){
+								data.doMove(Integer.parseInt(response.split(";")[1]),Integer.parseInt(response.split(";")[2]),Integer.parseInt(response.split(";")[3]),Integer.parseInt(response.split(";")[4]));
+								//board.removeAll();
+								//board.revalidate();
+								board.removeAll();
+								painting();
+								data.board[Integer.parseInt(response.split(";")[1])][Integer.parseInt(response.split(";")[2])].addMouseListener(this);
+								revalidate();
+							}
+				
+				
+				} 
 			}
+		catch (IOException e1) {
+			e1.printStackTrace();
 		}
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		System.out.println("xxxxxxxx");
+	public void mouseClicked(MouseEvent e) {
+		Field field = (Field) e.getSource();
+		if(isYourTurn){
+			System.out.println(field.X1 + " " + field.Y1);
+			if(field.kindOfField==2 && field.color==myColor){
+				if(!isSomethingChecked){
+					field.checked=true;
+					isSomethingChecked=true;
+					checkedField=field;
+					checkedX=checkedField.X1; 
+					checkedY=checkedField.Y1;
+					//field.revalidate();
+					board.removeAll();
+					painting();
+					revalidate();
+					pack();
+				}
+				else 
+					if(field.equals(checkedField) && checkedX==checkedField.X1 && checkedY==checkedField.Y1){
+						field.checked=false;
+						isSomethingChecked=false;
+						checkedField=null;
+						//field.revalidate();
+						board.removeAll();
+						painting();
+						revalidate();
+						pack();
+					}
+			}
+			else
+				if(isSomethingChecked){
+					if(data.isMoveLegal(checkedField.X1,checkedField.Y1 , field.X1, field.Y1, myColor)){
+						//removing();
+						//board.revalidate();
+						//board.repaint();
+						//revalidate();
+						//repaint();
+						int x=checkedField.X1;
+						int y=checkedField.Y1;
+						out.println("DO MOVE ;" + x + ";" + y + ";" + field.X1 + ";" + field.Y1);
+						data.doMove(x,y , field.X1, field.Y1);
+						//board.removeAll();
+						//board.revalidate();
+						board.removeAll();
+						painting();
+						data.board[x][y].addMouseListener(this);
+						revalidate();
+						//repaint();
+					}
+				}
+		}
 		
+		
+				
+		   
+	}
+
+	public void painting() {
+		//board = new JPanel(new GridLayout(height, width*2));
+		for (int x = 0; x < height; x++) {
+			for (int y = 0; y < width; y++) {
+				if(boardSize%2==1){
+						if(x%2==0){
+			                board.add(data.board[x][y]);
+			                if(data.board[x][y].kindOfField!=0){
+			                	if(!mouseListner){			                		
+			                		data.board[x][y].addMouseListener(this);
+			                	}
+			                	data.board[x][y].repaint();
+			                }
+			                board.add(new JPanel());
+			   
+						}
+						else{
+							board.add(new JPanel());
+							 board.add(data.board[x][y]);
+							 if(data.board[x][y].kindOfField!=0){
+								 if(!mouseListner){			                		
+				                	data.board[x][y].addMouseListener(this);
+				                 }
+				                 data.board[x][y].repaint();
+				             }
+			                
+						}
+				}
+				else{
+					if(x%2==1){
+		                board.add(data.board[x][y]);
+		                if(data.board[x][y].kindOfField!=0){
+		                	if(!mouseListner){			                		
+		                		data.board[x][y].addMouseListener(this);
+		                	}
+		                	data.board[x][y].repaint();
+		                }
+		                board.add(new JPanel());
+		   
+					}
+					else{
+						board.add(new JPanel());
+						 board.add(data.board[x][y]);
+						 if(data.board[x][y].kindOfField!=0){
+							 if(!mouseListner){			                		
+			                	data.board[x][y].addMouseListener(this);
+			                 }
+			                 data.board[x][y].repaint();
+			             }
+		                
+					}
+				}
+		    }
+		}
+		if(!mouseListner)
+			mouseListner=true;
 	}
 
 	@Override
@@ -151,7 +284,20 @@ class Window extends Frame implements MouseListener, ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		System.out.println("qqqqq");
+		if(checkedField!=null){
+			checkedField.checked=false;
+			checkedField.duringLongJump=false;
+			checkedField.firstMove=true;
+			board.removeAll();
+			painting();
+			revalidate();
+			isSomethingChecked=false;
+			checkedField=null;
+			isYourTurn=false;
+			out.println("END TURN");
+			whosTurn.setText("It's not your turn, wait please");
+			revalidate();
+		}
 		
 	}
 
