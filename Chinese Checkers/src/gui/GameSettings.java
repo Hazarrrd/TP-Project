@@ -113,6 +113,9 @@ public class GameSettings extends JFrame implements ActionListener {
 			else
 				if(response.startsWith("MESSAGE"))
 					tekst.setText(response.substring(8));
+				else
+					if(response.equals("QUIT"))
+						break;
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

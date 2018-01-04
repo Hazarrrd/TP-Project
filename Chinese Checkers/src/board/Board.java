@@ -1,6 +1,9 @@
 package board;
 
 
+import java.awt.Color;
+import java.awt.Window;
+import java.awt.event.MouseListener;
 import java.io.ObjectOutputStream.PutField;
 import java.nio.channels.ShutdownChannelGroupException;
 import java.util.ArrayList;
@@ -25,6 +28,19 @@ public class Board {
 	public Field[][] board;
 	public int side;
 	public int playerNumber;
+	public ArrayList<Field> checker1;
+	public ArrayList<Field> checker2;
+	public ArrayList<Field> checker3;
+	public ArrayList<Field> checker4;
+	public ArrayList<Field> checker5;
+	public ArrayList<Field> checker6;
+	
+	public ArrayList<Field> color0;
+	public ArrayList<Field> color1;
+	public ArrayList<Field> color2;
+	public ArrayList<Field> color3;
+	public ArrayList<Field> color4;
+	public ArrayList<Field> color5;
 	
 	public Board(int side,int playerNumber){
 		this.playerNumber=playerNumber;
@@ -48,14 +64,18 @@ public class Board {
 		Field target = board[x2][y2];
 		Field checker = board[x1][y1];
 		
-		if(target.kindOfField!=1)
+		if(target.kindOfField!=1){
+			System.out.println("nie puste");
 			return false;
+		}
 		
-		if(checker.kindOfField!=2)
+		if(checker.kindOfField!=2){
+			System.out.println("nie pionek");
 			return false;
+		}
 		else
 			if(checker.color!=color){
-				//System.out.println(checker.color);
+				System.out.println("zly kolor");
 				return false;
 			}
 		if(areTheyNeighbours(target,checker) && checker.firstMove)
@@ -64,13 +84,22 @@ public class Board {
 			//System.out.println("xd");
 			ArrayList<Field> neighbours= giveNeighbours(checker);
 			for(int i=0;i < neighbours.size(); i++){
+				boolean memory=neighbours.get(i).reachedTarget;
+				neighbours.get(i).reachedTarget=false;
 				if(neighbours.get(i).kindOfField==2)
 					if(areTheyNeighbours(target,neighbours.get(i)))
-						if(!(checker.reachedTarget) || checkIfInTriangle(neighbours.get(i),checker.target))
+						if(!(checker.reachedTarget) || checkIfInTriangle(target,checker.target)){
+							neighbours.get(i).reachedTarget=memory;
 							return true;
+						}
+				neighbours.get(i).reachedTarget=memory;
 			}
 				
 		}
+		System.out.println("first " + checker.firstMove);
+		System.out.println("during"+ checker.duringLongJump);
+		System.out.println("reached"+ checker.reachedTarget);
+		showBoard(this.board, this.side);
 		return false;
 		
 	}
@@ -83,36 +112,80 @@ public class Board {
 	private ArrayList<Field> giveNeighbours(Field target) {
 		ArrayList<Field> neighbours = new ArrayList<Field>();
 		//System.out.println(target.color);
-		if(target.X1%2==1){
-			if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1+1][target.Y1],target.target))
-				giveNeighbourToArray(target.X1+1,target.Y1, neighbours);
-			if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1-1][target.Y1],target.target))
-				giveNeighbourToArray(target.X1-1,target.Y1, neighbours);
-			if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1][target.Y1+1],target.target))
-				giveNeighbourToArray(target.X1,target.Y1+1, neighbours);
-			if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1][target.Y1-1],target.target))
-				giveNeighbourToArray(target.X1,target.Y1-1, neighbours);
-			if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1+1][target.Y1+1],target.target))
-				giveNeighbourToArray(target.X1+1,target.Y1+1, neighbours);
-			if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1-1][target.Y1+1],target.target))
-				giveNeighbourToArray(target.X1-1,target.Y1+1, neighbours);
-		}	
-		else{
-			if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1+1][target.Y1],target.target))
-				giveNeighbourToArray(target.X1+1,target.Y1, neighbours);
-			if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1-1][target.Y1],target.target))
-				giveNeighbourToArray(target.X1-1,target.Y1, neighbours);
-			if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1][target.Y1+1],target.target))
-				giveNeighbourToArray(target.X1,target.Y1+1, neighbours);
-			if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1][target.Y1-1],target.target))
-				giveNeighbourToArray(target.X1,target.Y1-1, neighbours);
-			if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1+1][target.Y1-1],target.target))
-				giveNeighbourToArray(target.X1+1,target.Y1-1, neighbours);
-			if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1-1][target.Y1-1],target.target))
-				giveNeighbourToArray(target.X1-1,target.Y1-1, neighbours);
-		}
+			if(side%2==1)
+				giveNeighboursHelper(target, neighbours, target.X1%2, 1);
+			else
+				giveNeighboursHelper(target, neighbours, target.X1%2, 0);
 			
 		return neighbours;
+	}
+
+	public void giveNeighboursHelper(Field target, ArrayList<Field> neighbours, int x, int y) {
+		if(x==y){
+			try {
+				if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1+1][target.Y1],target.target))
+					giveNeighbourToArray(target.X1+1,target.Y1, neighbours);
+			} catch(ArrayIndexOutOfBoundsException exception) {
+			}
+			try {
+				if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1-1][target.Y1],target.target))
+					giveNeighbourToArray(target.X1-1,target.Y1, neighbours);
+			} catch(ArrayIndexOutOfBoundsException exception) {
+			}
+			try {
+				if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1][target.Y1+1],target.target))
+					giveNeighbourToArray(target.X1,target.Y1+1, neighbours);
+			} catch(ArrayIndexOutOfBoundsException exception) {
+			}
+			try {
+				if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1][target.Y1-1],target.target))
+					giveNeighbourToArray(target.X1,target.Y1-1, neighbours);
+			} catch(ArrayIndexOutOfBoundsException exception) {
+			}
+			try {
+				if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1+1][target.Y1+1],target.target))
+					giveNeighbourToArray(target.X1+1,target.Y1+1, neighbours);
+			} catch(ArrayIndexOutOfBoundsException exception) {
+			}
+			try {
+				if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1-1][target.Y1+1],target.target))
+					giveNeighbourToArray(target.X1-1,target.Y1+1, neighbours);
+			} catch(ArrayIndexOutOfBoundsException exception) {
+			}
+	
+		}	
+		else{
+			try {
+				if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1+1][target.Y1],target.target))
+					giveNeighbourToArray(target.X1+1,target.Y1, neighbours);
+			} catch(ArrayIndexOutOfBoundsException exception) {
+			}
+			try {
+				if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1-1][target.Y1],target.target))
+					giveNeighbourToArray(target.X1-1,target.Y1, neighbours);
+			} catch(ArrayIndexOutOfBoundsException exception) {
+			}
+			try {
+				if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1][target.Y1+1],target.target))
+					giveNeighbourToArray(target.X1,target.Y1+1, neighbours);
+			} catch(ArrayIndexOutOfBoundsException exception) {
+			}
+			try {
+				if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1][target.Y1-1],target.target))
+					giveNeighbourToArray(target.X1,target.Y1-1, neighbours);
+			} catch(ArrayIndexOutOfBoundsException exception) {
+			}
+			try {
+				if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1+1][target.Y1-1],target.target))
+					giveNeighbourToArray(target.X1+1,target.Y1-1, neighbours);
+			} catch(ArrayIndexOutOfBoundsException exception) {
+			}
+			try {
+				if(!(target.reachedTarget) || checkIfInTriangle(board[target.X1-1][target.Y1-1],target.target))
+					giveNeighbourToArray(target.X1-1,target.Y1-1, neighbours);
+			} catch(ArrayIndexOutOfBoundsException exception) {
+			}
+		}
 	}
 
 	/*
@@ -136,9 +209,11 @@ public class Board {
 	private boolean areTheyNeighbours(Field target, Field checker) {
 		ArrayList<Field> neighbours= giveNeighbours(checker);
 		//System.out.println(neighbours.size());
-		for(int i=0;i < neighbours.size(); i++)
+		for(int i=0;i < neighbours.size(); i++){
+			System.out.println("sasiady " + checker.X1 + " " + checker.Y1 + " to " + neighbours.get(i).X1 + " " + neighbours.get(i).Y1);
 			if(neighbours.get(i).equals(target))
 				return true;
+		}
 		return false;		
 	}
 
@@ -155,6 +230,64 @@ public class Board {
 		checkIfInTarget(this.board[X2][Y2]);
 		this.board[X1][Y1]=new EmptyField(X1,Y1);
 	}
+	
+	/**
+	 * Delete checker than belongs to one color
+	 * @param X1
+	 * @param Y1
+	 * @param X2
+	 * @param Y2
+	 */
+	public void deleteCheckers(Colors color,MouseListener window) {
+		for(int i=0;i<height;i++)
+			for(int j=0;j<width;j++)
+				if(board[i][j].kindOfField==2 && board[i][j].color==color){
+					board[i][j]=new EmptyField(i,j);
+					try {
+						if(!window.equals(null))
+							board[i][j].addMouseListener(window);
+					} catch (NullPointerException e){ 
+					}
+				}
+	}
+	
+	
+	/**
+	 * Checks if player has won
+	 * @param color
+	 * @return
+	 */
+	public Boolean didPlayerWin(Colors color) {
+		switch(color){
+		
+			case GREEN :
+				return didPlayerWinHelper(color0);
+				
+			case YELLOW :
+				return didPlayerWinHelper(color1);
+				
+			case RED :
+				return didPlayerWinHelper(color2);
+				
+			case  BLUE:
+				return didPlayerWinHelper(color3);
+				
+			case  ORANGE:
+				return didPlayerWinHelper(color4);
+				
+			case PINK :
+				return didPlayerWinHelper(color5);
+			
+		}
+		return null;
+	}
+	
+	private Boolean didPlayerWinHelper(ArrayList<Field> list) {
+		for(int i=0;i<list.size();i++)
+			if(!list.get(i).reachedTarget)
+				return false;
+		return true;
+	}
 	/**
 	 * This method puts checkers on their starting place in the board
 	 */
@@ -162,39 +295,58 @@ public class Board {
 		switch (playerNumber){
 		case 2 :
 			fillerFirst(0);
+			color0= checker1;
 			fillerFourth(1);
+			color1=checker4;
 			break;
 		case 3 :
 			fillerFirst(0);
+			color0= checker1;
 			fillerThird(1);
+			color1= checker3;
 			fillerFifth(2);
+			color2= checker5;
 			
 			break;
 		case 4 :
 			fillerSecond(0);
+			color0= checker2;
 			fillerThird(1);
+			color1= checker3;
 			fillerFifth(2);
+			color2= checker5;
 			fillerSixth(3);
+			color3= checker6;
 			break;
 		case 6 :
 			fillerFirst(0);
+			color0= checker1;
 			fillerSecond(1);
+			color1= checker2;
 			fillerThird(2);
+			color2= checker3;
 			fillerFourth(3);
+			color3= checker4;
 			fillerFifth(4);
+			color4= checker5;
 			fillerSixth(5);
+			color5= checker6;
 			break;
 		}
 	}
 	
 	public void fillerFirst(int color) {
+		checker1= new ArrayList<Field>();
 		for(int i=0;i<side-1;i++)
 			for(int j=0; j<width;j++)
-				if(board[i][j].kindOfField!=0)
+				if(board[i][j].kindOfField!=0){
 					board[i][j]=new Checker(Colors.values()[color],i,j,4);
+					checker1.add(board[i][j]);
+				}
 	}
 	
 	public void fillerSecond(int color) {
+		checker2= new ArrayList<Field>();
 		int counter=0;
 		int limit=side-1;
 		int j=1;
@@ -202,6 +354,7 @@ public class Board {
 			while(counter<limit){
 				if(board[i][width-j].kindOfField!=0){
 					board[i][width-j]=new Checker(Colors.values()[color],i,width-j,5);
+					checker2.add(board[i][width-j]);
 					counter++;
 				}
 				j++;
@@ -214,6 +367,7 @@ public class Board {
 	}
 
 	public void fillerThird(int color) {
+		checker3= new ArrayList<Field>();
 		int counter=0;
 		int limit=1;
 		int j=1;
@@ -221,6 +375,7 @@ public class Board {
 			while(counter<limit){
 				if(board[i][width-j].kindOfField!=0){
 					board[i][width-j]=new Checker(Colors.values()[color],i,width-j,6);
+					checker3.add(board[i][width-j]);
 					counter++;
 				}
 				j++;
@@ -232,13 +387,17 @@ public class Board {
 	}
 	
 	public void fillerFourth(int color) {
+		checker4= new ArrayList<Field>();
 		for(int i=0;i<side-1;i++)
 			for(int j=0; j<width;j++)
-				if(board[height-1-i][j].kindOfField!=0)
+				if(board[height-1-i][j].kindOfField!=0){
 					board[height-1-i][j]=new Checker(Colors.values()[color],height-1-i,j,1);
+					checker4.add(board[height-1-i][j]);
+				}
 	}
 	
 	public void fillerFifth(int color) {
+		checker5= new ArrayList<Field>();
 		int counter=0;
 		int limit=1;
 		int j=0;
@@ -246,6 +405,7 @@ public class Board {
 			while(counter<limit){
 				if(board[i][j].kindOfField!=0){
 					board[i][j]=new Checker(Colors.values()[color],i,j,2);
+					checker5.add(board[i][j]);
 					counter++;
 				}
 				j++;
@@ -257,6 +417,7 @@ public class Board {
 	}
 	
 	public void fillerSixth(int color) {
+		checker6= new ArrayList<Field>();
 		int counter=0;
 		int limit=side-1;
 		int j=0;
@@ -264,6 +425,7 @@ public class Board {
 			while(counter<limit){
 				if(board[i][j].kindOfField!=0){
 					board[i][j]=new Checker(Colors.values()[color],i,j,3);
+					checker6.add(board[i][j]);
 					counter++;
 				}
 				j++;
@@ -409,7 +571,7 @@ public class Board {
 			triangle=arrayFifth();
 			return checkIfInTargetHelper(checker, triangle);
 		case 6 :
-			triangle=arraySecond();
+			triangle=arraySixth();
 			return checkIfInTargetHelper(checker, triangle);
 		}
 		return false;	
@@ -423,7 +585,6 @@ public class Board {
 		return false;
 	}
 	
-
 	/**
 	 * This method creates represtation of Board that exist in array
 	 * @param side

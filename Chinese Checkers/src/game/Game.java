@@ -51,6 +51,8 @@ public class Game {
 	public void disconnectPlayer(Player player){
 		this.playerList.remove(player);
 		this.normalPlayerList.remove(player);
+		this.players_ammount--;
+		this.realPLayers_ammount--;
 	}
 	
 	/**

@@ -17,6 +17,7 @@ import game.GameList;
 public class NormalPlayer extends Player {
 
 		private String stage="LOBBY";
+		private String[] parts;
 		
 
 		public NormalPlayer(Socket socket,GameList gamelist) {
@@ -88,7 +89,8 @@ public class NormalPlayer extends Player {
 	            					}
 	            					else
 	            						output.println("MESSAGE Wrong data");
-	            				else if (command.startsWith("QUIT")) {
+	            				else if (command.equals("QUIT")) {
+	            					output.println("QUIT");
 	            					return;
 	            				}
 	            	}
@@ -97,10 +99,11 @@ public class NormalPlayer extends Player {
             	while(game.playerList.size()!=game.players_ammount && !(game.findOppoments)){
             		String command= input.readLine();
 	            		if (command.startsWith("QUIT")) {
+	            			output.println("QUIT");
 	            			game.disconnectPlayer(this);
 	            			gameCleaner();
 	    					return;
-	    				}	         	            	  		
+	    				}	 
             	}
             	System.out.println("Wyszedlem");
             	/*
@@ -119,42 +122,56 @@ public class NormalPlayer extends Player {
                 // Actual game starts
                 while (stage=="GAMEWINDOW") {
                 	String command = input.readLine();
-                	if(game.playerList.size()==1)
-                		output.println("DEFEAT");
-                	else
                 		if(command.equals("END TURN")){
+                			game.board.board[Integer.parseInt(parts[3])][Integer.parseInt(parts[4])].duringLongJump=false;
+                			game.board.board[Integer.parseInt(parts[3])][Integer.parseInt(parts[4])].firstMove=true;
                 			game.turnCounter=(game.turnCounter+1)%game.players_ammount;
+                			System.out.println(game.realPLayers_ammount + " " + game.turnCounter);
                 			if(game.turnCounter<game.realPLayers_ammount)
                 				game.normalPlayerList.get(game.turnCounter).output.println("YOUR TURN");
                 		}
-	                	else
-		                    if (command.startsWith("DO MOVE ")) {
-		                    	System.out.println("aa");
-		                    	String[] parts=command.split(";");
-		                    	System.out.println(parts[1] + "xxx " + parts[4]);
-		                       // if (isMoveLegal(Integer.parseInt(parts[1]),Integer.parseInt(parts[2]),Integer.parseInt(parts[3]),Integer.parseInt(parts[4]), this)) {
-		                        	System.out.println("o tutaj2");
-		                        	checkerMove(Integer.parseInt(command.split(";")[1]),Integer.parseInt(command.split(";")[2]),Integer.parseInt(command.split(";")[3]),Integer.parseInt(command.split(";")[4]));
-		                            System.out.println("o tutaj3");
-		                            for(int i=0;i<game.normalPlayerList.size();i++)
-		                            	if(!game.normalPlayerList.get(i).equals(this)){
-		                            		game.normalPlayerList.get(i).output.println(command);
-		                            		System.out.println("o tutaj4");
-		                            	}
-		                            if(didPlayerWon(this))
-		                            	output.println("VICTORY");
-		                            	game.shouldWePlay=false;
-		                        //} 
-		                      //  else {
-		                          //  output.println("MESSAGE ?");
-		                       // }
-		                    } 
-		                    else 
-		                    	if (command.startsWith("QUIT")) {
-		                    		game.disconnectPlayer(this);
-		                			gameCleaner();
-		                    		return;
-		                    	}	
+                		else
+                			if(command.equals("END TURN2")){
+                    			game.turnCounter=(game.turnCounter+1)%game.players_ammount;
+                    			System.out.println(game.realPLayers_ammount + " " + game.turnCounter);
+                    			if(game.turnCounter<game.realPLayers_ammount)
+                    				game.normalPlayerList.get(game.turnCounter).output.println("YOUR TURN");
+                    		}
+		                	else
+			                    if (command.startsWith("DO MOVE ")) {
+			                    	//System.out.println("aa");
+			                    	parts=command.split(";");
+			                    	//System.out.println(command);
+			                    	System.out.println(Integer.parseInt(parts[1])+" "+Integer.parseInt(parts[2])+ " " +Integer.parseInt(parts[3])+ " "+ Integer.parseInt(parts[4]));
+			                        //if (isMoveLegal(Integer.parseInt(parts[1]),Integer.parseInt(parts[2]),Integer.parseInt(parts[3]),Integer.parseInt(parts[4]), game.normalPlayerList.get(game.turnCounter))) {
+			                        	//System.out.println("o tutaj2");
+			                        	for(int i=0;i<game.normalPlayerList.size();i++){
+			                            	if(!game.normalPlayerList.get(i).equals(this)){
+			                            		game.normalPlayerList.get(i).output.println(command);
+			                            		System.out.println("update");
+			                            	}
+			                            }
+			                        	checkerMove(Integer.parseInt(parts[1]),Integer.parseInt(parts[2]),Integer.parseInt(parts[3]),Integer.parseInt(parts[4]));
+			                            //System.out.println("o tutaj3");
+			                            if(didPlayerWon(this)){
+			                            	System.out.println("VICTORY");
+			                            	output.println("VICTORY");
+			                            	quitingPlayer();
+				                			return;
+			                           // }
+			                            } 
+			                       // else {
+			                        	//System.out.println("oblales");
+			                        	//game.board.showBoard(game.board.board, game.boardSize);
+			                          // output.println("MESSAGE ?");
+			                     //  }
+			                    } 
+			                    else 
+			                    	if (command.startsWith("QUIT")) {
+			                    		output.println("QUIT");
+			                    		quitingPlayer();
+			                    		return;
+			                    	}	
 	                }
             } catch (IOException e) {
                 System.out.println("Player died: " + e);
@@ -162,6 +179,30 @@ public class NormalPlayer extends Player {
                 try {socket.close();} catch (IOException e) {}
             }
         }
+
+		private void quitingPlayer() {
+			game.board.deleteCheckers(this.color,null);
+			for(int i=0;i<game.normalPlayerList.size();i++)
+				if(!game.normalPlayerList.get(i).equals(this)){
+			    		game.normalPlayerList.get(i).output.println("LOSE " + this.color);
+			    		System.out.println("update");
+				}
+			Boolean x=false;
+			if(game.normalPlayerList.get(game.turnCounter).equals(this))
+				x=true;
+			game.disconnectPlayer(this);
+			gameCleaner();
+			if(x){
+				if(game.players_ammount>0){
+					game.turnCounter=(game.turnCounter)%game.players_ammount;
+					if(game.turnCounter<game.realPLayers_ammount)
+						game.normalPlayerList.get(game.turnCounter).output.println("YOUR TURN");
+				}
+			}
+			else
+				if(game.normalPlayerList.get(game.turnCounter).equals(game.normalPlayerList.get(game.realPLayers_ammount-1)))
+					game.turnCounter--;
+		}
 
 		/**
 		 * Method that starts game when all player are connected
@@ -176,8 +217,8 @@ public class NormalPlayer extends Player {
 				setColors(game.playerList);
 				game.actualPlayer=game.playerList.get(game.turnCounter);
 				game.findOppoments=true;
-				for(int i=0;i<game.normalPlayerList.size();i++)
-					game.normalPlayerList.get(i).output.println("COLOR " + i);
+				for(int i=0;i<game.playerList.size();i++)
+					game.playerList.get(i).output.println("COLOR " + i);
 				for(int i=0;i<game.normalPlayerList.size();i++)
 						game.normalPlayerList.get(i).output.println("START GAME");
 				
