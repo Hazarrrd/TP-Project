@@ -21,7 +21,7 @@ public class Test extends TestCase {
     //Board board3 = null;
 
     public void setUp() {
-        board1 = new Board(5, 6);
+        board1 = new Board(5, 6,10);
         //board2 = new Board(5, 7);
         //board3 = new Board(3, 6);
     }

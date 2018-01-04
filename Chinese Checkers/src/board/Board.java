@@ -28,6 +28,7 @@ public class Board {
 	public Field[][] board;
 	public int side;
 	public int playerNumber;
+	public int checkersNumber;
 	public ArrayList<Field> checker1;
 	public ArrayList<Field> checker2;
 	public ArrayList<Field> checker3;
@@ -42,12 +43,13 @@ public class Board {
 	public ArrayList<Field> color4;
 	public ArrayList<Field> color5;
 	
-	public Board(int side,int playerNumber){
+	public Board(int side,int playerNumber, int checkersNumber){
 		this.playerNumber=playerNumber;
 		this.side=side;
 		this.width=(side-2)+2*side;
  		this.height=4*side-3;
 		this.board=makeEmptyBoard(this.side);
+		this.checkersNumber=checkersNumber;
 		putCheckers();
 	}
 	
@@ -336,32 +338,73 @@ public class Board {
 	}
 	
 	public void fillerFirst(int color) {
+		int checkersCounter=0;
 		checker1= new ArrayList<Field>();
 		for(int i=0;i<side-1;i++)
 			for(int j=0; j<width;j++)
-				if(board[i][j].kindOfField!=0){
+				if(board[i][j].kindOfField!=0 && checkersCounter<checkersNumber){
 					board[i][j]=new Checker(Colors.values()[color],i,j,4);
 					checker1.add(board[i][j]);
+					checkersCounter++;
 				}
 	}
-	
+	public void fillerSecond(int color) {
+		checker6= new ArrayList<Field>();
+		int counter=0;
+		int j=0;
+		int emptyCounter[]=new int[side-1];
+		emptyCounter[0]=1;
+		for (int i=1;i<side-1;i++)
+			emptyCounter[i]=emptyCounter[i-1]-1;
+		int checkersCounter=0;
+		int firstRow=side-1;
+		for(int z=0;z<side-1;z++){
+			for(int i=0;i<side-1; i++){
+				j=1;
+				counter=0;
+				if(emptyCounter[i]>0){
+					while(counter<emptyCounter[i]){
+						if(board[firstRow+i][width-j].kindOfField!=0){
+							//board[i][j]=new Checker(Colors.values()[color],i,j,3);
+							//checker6.add(board[i][j]);
+							counter++;
+							//checkersCounter++;
+						}
+						if(counter!=emptyCounter[i])
+							j++;
+					}
+					if(checkersCounter<checkersNumber){
+						board[firstRow+i][width-j]=new Checker(Colors.values()[color],firstRow+i,j,3);
+						checker6.add(board[firstRow+i][width-j]);
+						checkersCounter++;
+					}
+				}
+			}
+			for (int g=0;g<side-1;g++)
+				emptyCounter[g]++;
+		}
+	}
+	/*
 	public void fillerSecond(int color) {
 		checker2= new ArrayList<Field>();
 		int counter=0;
-		int limit=side-1;
+		int limit=checkersNumber-1;
 		int j=1;
+		int checkersCounter=0;
 		for(int i=side-1;i<2*(side-1); i++){
-			while(counter<limit){
-				if(board[i][width-j].kindOfField!=0){
-					board[i][width-j]=new Checker(Colors.values()[color],i,width-j,5);
-					checker2.add(board[i][width-j]);
-					counter++;
+				while(counter<limit){
+				//	if(checkersCounter<checkersNumber)
+						if(board[i][width-j].kindOfField!=0){
+							board[i][width-j]=new Checker(Colors.values()[color],i,width-j,5);
+							checker2.add(board[i][width-j]);
+							counter++;
+							checkersCounter++;
+						}
+					j++;
 				}
-				j++;
-			}
-			counter=0;
-			limit--;
-			j=1;
+				counter=0;
+				limit--;
+				j=1;
 		}
 		
 	}
@@ -371,68 +414,195 @@ public class Board {
 		int counter=0;
 		int limit=1;
 		int j=1;
+		int checkersCounter=0;
 		for(int i=2*side-1;i<3*side-2;i++){
-			while(counter<limit){
-				if(board[i][width-j].kindOfField!=0){
-					board[i][width-j]=new Checker(Colors.values()[color],i,width-j,6);
-					checker3.add(board[i][width-j]);
-					counter++;
+			if(checkersCounter<checkersNumber){
+				while(counter<limit){
+					if(board[i][width-j].kindOfField!=0){
+						board[i][width-j]=new Checker(Colors.values()[color],i,width-j,6);
+						checker3.add(board[i][width-j]);
+						counter++;
+						checkersCounter++;
+					}
+					j++;
 				}
-				j++;
+				counter=0;
+				limit++;
+				j=1;
 			}
-			counter=0;
-			limit++;
-			j=1;
+		}
+	}*/
+	
+	public void fillerThird(int color) {
+		checker6= new ArrayList<Field>();
+		int counter=0;
+		int j=0;
+		int emptyCounter[]=new int[side-1];
+		emptyCounter[side-2]=1;
+		for (int i=side-3;i>=0;i--)
+			emptyCounter[i]=emptyCounter[i+1]-1;
+		int checkersCounter=0;
+		int firstRow=side*2-1;
+		for(int z=0;z<side-1;z++){
+			for(int i=0;i<side-1; i++){
+				j=1;
+				counter=0;
+				if(emptyCounter[i]>0){
+					while(counter<emptyCounter[i]){
+						if(board[firstRow+i][width-j].kindOfField!=0){
+							//board[i][j]=new Checker(Colors.values()[color],i,j,3);
+							//checker6.add(board[i][j]);
+							counter++;
+							//checkersCounter++;
+						}
+						if(counter!=emptyCounter[i])
+							j++;
+					}
+					if(checkersCounter<checkersNumber){
+						board[firstRow+i][width-j]=new Checker(Colors.values()[color],firstRow+i,j,3);
+						checker6.add(board[firstRow+i][width-j]);
+						checkersCounter++;
+					}
+				}
+			}
+			for (int g=0;g<side-1;g++)
+				emptyCounter[g]++;
 		}
 	}
 	
 	public void fillerFourth(int color) {
 		checker4= new ArrayList<Field>();
+		int checkersCounter=0;
 		for(int i=0;i<side-1;i++)
-			for(int j=0; j<width;j++)
-				if(board[height-1-i][j].kindOfField!=0){
+			for(int j=width-1; j>=0;j--)
+				if(board[height-1-i][j].kindOfField!=0 && checkersCounter<checkersNumber){
 					board[height-1-i][j]=new Checker(Colors.values()[color],height-1-i,j,1);
 					checker4.add(board[height-1-i][j]);
+					checkersCounter++;
 				}
 	}
 	
+	public void fillerFifth(int color) {
+		checker6= new ArrayList<Field>();
+		int counter=0;
+		int j=0;
+		int emptyCounter[]=new int[side-1];
+		emptyCounter[side-2]=1;
+		for (int i=side-3;i>=0;i--)
+			emptyCounter[i]=emptyCounter[i+1]-1;
+		int checkersCounter=0;
+		int firstRow=side*2-1;
+		for(int z=0;z<side-1;z++){
+			for(int i=side-2;i>=0; i--){
+				j=0;
+				counter=0;
+				if(emptyCounter[i]>0){
+					while(counter<emptyCounter[i]){
+						if(board[firstRow+i][j].kindOfField!=0){
+							//board[i][j]=new Checker(Colors.values()[color],i,j,3);
+							//checker6.add(board[i][j]);
+							counter++;
+							//checkersCounter++;
+						}
+						if(counter!=emptyCounter[i])
+							j++;
+					}
+					if(checkersCounter<checkersNumber){
+						board[firstRow+i][j]=new Checker(Colors.values()[color],firstRow+i,j,3);
+						checker6.add(board[firstRow+i][j]);
+						checkersCounter++;
+					}
+				}
+			}
+			for (int g=0;g<side-1;g++)
+				emptyCounter[g]++;
+		}
+	}
+	/*
 	public void fillerFifth(int color) {
 		checker5= new ArrayList<Field>();
 		int counter=0;
 		int limit=1;
 		int j=0;
+		int checkersCounter=0;
 		for(int i=2*side-1;i<3*side-2;i++){
-			while(counter<limit){
-				if(board[i][j].kindOfField!=0){
-					board[i][j]=new Checker(Colors.values()[color],i,j,2);
-					checker5.add(board[i][j]);
-					counter++;
+			if(checkersCounter<checkersNumber){
+				while(counter<limit){
+					if(board[i][j].kindOfField!=0){
+						board[i][j]=new Checker(Colors.values()[color],i,j,2);
+						checker5.add(board[i][j]);
+						counter++;
+						checkersCounter++;
+					}
+					j++;
 				}
-				j++;
+				counter=0;
+				limit++;
+				j=0;
 			}
-			counter=0;
-			limit++;
-			j=0;
 		}
 	}
+	
 	
 	public void fillerSixth(int color) {
 		checker6= new ArrayList<Field>();
 		int counter=0;
-		int limit=side-1;
+		int limit=checkersNumber;
 		int j=0;
+		int checkersCounter=0;
 		for(int i=side-1;i<2*(side-1); i++){
-			while(counter<limit){
-				if(board[i][j].kindOfField!=0){
-					board[i][j]=new Checker(Colors.values()[color],i,j,3);
-					checker6.add(board[i][j]);
-					counter++;
+			if(checkersCounter<checkersNumber){
+				while(counter<limit){
+					if(board[i][j].kindOfField!=0){
+						board[i][j]=new Checker(Colors.values()[color],i,j,3);
+						checker6.add(board[i][j]);
+						counter++;
+						checkersCounter++;
+					}
+					j++;
 				}
-				j++;
+				counter=0;
+				limit--;
+				j=0;
 			}
-			counter=0;
-			limit--;
-			j=0;
+		}
+	}
+	*/
+	
+	public void fillerSixth(int color) {
+		checker6= new ArrayList<Field>();
+		int counter=0;
+		int j=0;
+		int emptyCounter[]=new int[side-1];
+		emptyCounter[0]=1;
+		for (int i=1;i<side-1;i++)
+			emptyCounter[i]=emptyCounter[i-1]-1;
+		int checkersCounter=0;
+		int firstRow=side-1;
+		for(int z=0;z<side-1;z++){
+			for(int i=side-2;i>=0; i--){
+				j=0;
+				counter=0;
+				if(emptyCounter[i]>0){
+					while(counter<emptyCounter[i]){
+						if(board[firstRow+i][j].kindOfField!=0){
+							//board[i][j]=new Checker(Colors.values()[color],i,j,3);
+							//checker6.add(board[i][j]);
+							counter++;
+							//checkersCounter++;
+						}
+						if(counter!=emptyCounter[i])
+							j++;
+					}
+					if(checkersCounter<checkersNumber){
+						board[firstRow+i][j]=new Checker(Colors.values()[color],firstRow+i,j,3);
+						checker6.add(board[firstRow+i][j]);
+						checkersCounter++;
+					}
+				}
+			}
+			for (int g=0;g<side-1;g++)
+				emptyCounter[g]++;
 		}
 	}
 	
@@ -699,7 +869,7 @@ public class Board {
 	
 	
 	 public static void main(String[] args) throws Exception {
-		 Board board = new Board(4,3);
+		 Board board = new Board(4,3,6);
 		 //board.doMove(13, 4, 5, 7);
 		// board.doMove(3, 4, 13, 4);
 		//board.doMove(13, 4, 12, 4);

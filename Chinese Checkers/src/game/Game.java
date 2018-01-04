@@ -34,6 +34,10 @@ public class Game {
 	
 	public Board board;
 	public int boardSize;
+	public int checkersNumber;
+	public int checkedX;
+	public int checkedY;
+	
 	
 	public void setGameName(String string){
 		this.gameName=string;
@@ -71,7 +75,7 @@ public class Game {
 	}
 
 	public void makeBoard() {
-		this.board=new Board(boardSize,this.players_ammount);
+		this.board=new Board(boardSize,this.players_ammount,checkersNumber);
 		
 	}
 	

@@ -50,12 +50,12 @@ class Window extends Frame implements MouseListener, ActionListener {
 	private boolean isYourTurn;
 	private int boardSize;
 	
-	public Window(int type, PrintWriter out, BufferedReader in, int size) {
+	public Window(int type, PrintWriter out, BufferedReader in, int size, int checkersNumber) {
 		this.out=out;
 		this.in=in;
 		this.boardSize=size;
 		//BOARD
-		data=new Board(size,type);
+		data=new Board(size,type,checkersNumber);
 		height=data.height;
 		width=data.width;
 		board = new JPanel(new GridLayout(height, width*2));
@@ -66,14 +66,14 @@ class Window extends Frame implements MouseListener, ActionListener {
 		yourColor = new JLabel("Your color is :");
 		whosTurn = new JTextArea("It's not your turn, wait please");
 		whosTurn.setEditable(false);
-		communicate = new JTextArea("communicate");
-		communicate.setEditable(false);
+		//communicate = new JTextArea("communicate");
+		//communicate.setEditable(false);
 		endTurn = new JButton("End turn");
 		endTurn.addActionListener(this);
 		
 		yourColor.setPreferredSize(new Dimension(215, 50));
 		whosTurn.setPreferredSize(new Dimension(215, 50));
-		communicate.setPreferredSize(new Dimension(215, 50));
+		//communicate.setPreferredSize(new Dimension(215, 50));
 		endTurn.setPreferredSize(new Dimension(215, 10));
 		
 		adding();
@@ -100,7 +100,7 @@ class Window extends Frame implements MouseListener, ActionListener {
 	public void adding() {
 		labels.add(yourColor);
 		labels.add(whosTurn);
-		labels.add(communicate);
+		//labels.add(communicate);
 		labels.add(endTurn);
 	}
 	
@@ -205,6 +205,8 @@ class Window extends Frame implements MouseListener, ActionListener {
 					checkedField=field;
 					checkedX=checkedField.X1; 
 					checkedY=checkedField.Y1;
+					out.println("CHECKX " + checkedX);
+					out.println("CHECKY " + checkedY);
 					//field.revalidate();
 					board.removeAll();
 					painting();
@@ -214,6 +216,8 @@ class Window extends Frame implements MouseListener, ActionListener {
 				else 
 					if(field.equals(checkedField) && checkedX==checkedField.X1 && checkedY==checkedField.Y1){
 						field.checked=false;
+						field.duringLongJump=false;
+						field.firstMove=true;
 						isSomethingChecked=false;
 						checkedField=null;
 						//field.revalidate();
@@ -225,7 +229,7 @@ class Window extends Frame implements MouseListener, ActionListener {
 			}
 			else
 				if(isSomethingChecked){
-					if(data.isMoveLegal(checkedField.X1,checkedField.Y1 , field.X1, field.Y1, myColor)){
+					//if(data.isMoveLegal(checkedField.X1,checkedField.Y1 , field.X1, field.Y1, myColor)){
 						//removing();
 						//board.revalidate();
 						//board.repaint();
@@ -234,15 +238,15 @@ class Window extends Frame implements MouseListener, ActionListener {
 						int x=checkedField.X1;
 						int y=checkedField.Y1;
 						out.println("DO MOVE ;" + x + ";" + y + ";" + field.X1 + ";" + field.Y1);
-						data.doMove(x,y , field.X1, field.Y1);
+					/*	data.doMove(x,y , field.X1, field.Y1);
 						board.removeAll();
 						board.revalidate();
 						board.removeAll();
 						painting();
 						data.board[x][y].addMouseListener(this);
 						revalidate();
-						repaint();
-					}
+						repaint();*/
+					//}
 				}
 		}
 		
@@ -335,35 +339,35 @@ class Window extends Frame implements MouseListener, ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if(checkedField!=null){
-			checkedField.checked=false;
-			checkedField.duringLongJump=false;
-			checkedField.firstMove=true;
-			board.removeAll();
-			painting();
-			revalidate();
-			isSomethingChecked=false;
-			checkedField=null;
-			isYourTurn=false;
-			out.println("END TURN");
-			labels.removeAll();
-			whosTurn.setText("It's not your turn, wait please");
-			adding();
-			repaint();
-			revalidate();
-			
-		}
-		else{
-			isYourTurn=false;
-			out.println("END TURN2");
-			labels.removeAll();
-			whosTurn.setText("It's not your turn, wait please");
-			adding();
-			repaint();
-			revalidate();
-		}
+		if(isYourTurn){
+			if(checkedField!=null){
+				checkedField.checked=false;
+				checkedField.duringLongJump=false;
+				checkedField.firstMove=true;
+				board.removeAll();
+				painting();
+				revalidate();
+				isSomethingChecked=false;
+				checkedField=null;
+				isYourTurn=false;
+				out.println("END TURN");
+				labels.removeAll();
+				whosTurn.setText("It's not your turn, wait please");
+				adding();
+				repaint();
+				revalidate();				
+			}
+			else{
+				isYourTurn=false;
+				out.println("END TURN2");
+				labels.removeAll();
+				whosTurn.setText("It's not your turn, wait please");
+				adding();
+				repaint();
+				revalidate();
+			}
 		
-	}
+		}
 
-	
+	}
 }

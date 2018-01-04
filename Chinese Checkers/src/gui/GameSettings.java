@@ -27,6 +27,7 @@ public class GameSettings extends JFrame implements ActionListener {
 	private JLabel botNumberLabel;
 	private JLabel normalPlayerLabel;
 	private JLabel boardSizeLabel;
+	private JLabel checkersNumberLabel;
 	private JTextArea tekst;
 	private JComboBox setBotNumber;
 	private JComboBox setNormalPlayers;
@@ -34,15 +35,17 @@ public class GameSettings extends JFrame implements ActionListener {
 	private String[] botNumber = { "0", "1", "2", "3", "4", "5" };
 	private String[] normalPlayersNumber = { "1", "2", "3", "4", "5","6" };
 	private String[] boardSize = { "S", "M", "L", "XL", "XXL" };
-	JPanel menu = new JPanel(new GridLayout(5,2));
+	JPanel menu = new JPanel(new GridLayout(6,2));
 	private JLabel gameNameLabel;
 	private JTextField setGameName;
+	private JTextField setCheckersNumber;
 	
 	private PrintWriter out;
 	private BufferedReader in;
 	
 	private int ammountOfPlayers;
-	private int bordSize;
+	private int side;
+	private int checkersNumberInt;
 	
 	//konstruktor
 	public GameSettings(PrintWriter out, BufferedReader in) {
@@ -56,9 +59,11 @@ public class GameSettings extends JFrame implements ActionListener {
 		normalPlayerLabel = new JLabel("Set ammount of real players");
 		gameNameLabel = new JLabel("Set gameName");
 		boardSizeLabel = new JLabel("Set board size");
+		checkersNumberLabel = new JLabel("Set number of checkers");
 		tekst= new JTextArea("Remember that this is game for 2,3,4 or 6 players");
 		tekst.setEditable(false);
 		setGameName=new JTextField("");
+		setCheckersNumber=new JTextField("");
 		setBotNumber = new JComboBox(botNumber);
 		setNormalPlayers = new JComboBox(normalPlayersNumber);
 		setBoardSize = new JComboBox(boardSize);
@@ -73,6 +78,8 @@ public class GameSettings extends JFrame implements ActionListener {
 		menu.add(setBoardSize);
 		menu.add(gameNameLabel);
 		menu.add(setGameName);
+		menu.add(checkersNumberLabel);
+		menu.add(setCheckersNumber);
 		menu.add(start);
 		menu.add(tekst);
 		
@@ -95,7 +102,7 @@ public class GameSettings extends JFrame implements ActionListener {
 				response = in.readLine();
 				System.out.println(response);
 			if(response.equals("GAMEWINDOW")){
-				Window frame = new Window(ammountOfPlayers,out, in, bordSize);
+				Window frame = new Window(ammountOfPlayers,out, in, side, checkersNumberInt);
 				frame.setTitle("Chinese checkers : " + setGameName.getText());
 				
 				frame.addWindowListener( new WindowAdapter() {
@@ -127,18 +134,34 @@ public class GameSettings extends JFrame implements ActionListener {
 	
 		int botAmmount=setBotNumber.getSelectedIndex();
 		int normalPlayerAmmount=setNormalPlayers.getSelectedIndex()+1;
-		bordSize=setBoardSize.getSelectedIndex()+2;
+		side=setBoardSize.getSelectedIndex()+2;
 		ammountOfPlayers=botAmmount+normalPlayerAmmount;
 		String gameNameString=setGameName.getText();
-		
-		if(!(gameNameString.equals(""))){
-			out.println("PLAYERAMMOUNT " + Integer.toString(normalPlayerAmmount));
-			out.println("BOTSAMMOUNT " + Integer.toString(botAmmount));
-			out.println("BOARDSIZE " + Integer.toString(bordSize));
-			out.println("FINDOPPOMENTS " + gameNameString);
+		String checkersNumber=setCheckersNumber.getText();
+		try {
+			checkersNumberInt=Integer.parseInt(checkersNumber);
+			int checkersLimit=0;
+			for(int i=0;i<side;i++)
+				checkersLimit+=i;
+			if(0<checkersNumberInt && checkersNumberInt<=checkersLimit)
+				if(!(gameNameString.equals(""))){
+					out.println("PLAYERAMMOUNT " + Integer.toString(normalPlayerAmmount));
+					out.println("BOTSAMMOUNT " + Integer.toString(botAmmount));
+					out.println("BOARDSIZE " + Integer.toString(side));
+					out.println("CHECKERS " + checkersNumber);
+					out.println("FINDOPPOMENTS " + gameNameString);
+				}
+				else
+					tekst.setText("You must name your game!");
+			else{
+				tekst.setText("Checkers number must be beetween " + "1 and " + checkersLimit);
+				pack();
+			}
+		} catch (NumberFormatException e1) {
+			tekst.setText("Bad format in checkersNumber. You must write in a number!");
+			pack();
 		}
-		else
-			tekst.setText("You must name your game!");
+		
 	}
 }
 		

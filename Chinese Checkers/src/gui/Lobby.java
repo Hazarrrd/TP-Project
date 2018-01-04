@@ -34,6 +34,7 @@ public class Lobby extends JFrame {
 	private PrintWriter out;
 	private BufferedReader in;
 	private JTextArea tekst;
+	private String checkersAmmount;
 	
 //constructor
 	public Lobby(PrintWriter out,BufferedReader in) {
@@ -97,45 +98,48 @@ public class Lobby extends JFrame {
 				if(response.equals("WRONG GAMENAME"))
 					tekst.setText("This game doesn't exist");
 				else
-					if(response.equals("NO SLOT"))
-						tekst.setText("This game is full");
+					if(response.startsWith("CHECKERSSIZE "))
+						checkersAmmount=response.substring(13);
 					else
-						if(response.startsWith("GOOD GAMENAME")){
-							Window frame = new Window(Integer.parseInt(response.substring(14, 15)),out, in,Integer.parseInt(response.substring(16)));
-					
-							frame.setTitle("Chinese checkers : " + setGameName.getText());
-					
-							frame.addWindowListener( new WindowAdapter() {
-					
-								public void windowClosing(WindowEvent e) {
-									out.println("QUIT");
-									System.exit(0);
-								}
-								});
-							this.setVisible(false);
-							frame.setVisible(true);
-							frame.run();
-							break;
-						}
+						if(response.equals("NO SLOT"))
+							tekst.setText("This game is full");
 						else
-							if(response.equals("GAMESETTINGS")){
-								GameSettings frame = new GameSettings(out,in);
-								
-								frame.setTitle("Game Settings");
-								
+							if(response.startsWith("GOOD GAMENAME")){
+								Window frame = new Window(Integer.parseInt(response.substring(14, 15)),out, in,Integer.parseInt(response.substring(16)), Integer.parseInt(checkersAmmount));
+						
+								frame.setTitle("Chinese checkers : " + setGameName.getText());
+						
 								frame.addWindowListener( new WindowAdapter() {
-								
+						
 									public void windowClosing(WindowEvent e) {
 										out.println("QUIT");
 										System.exit(0);
 									}
-								});
-								
+									});
 								this.setVisible(false);
 								frame.setVisible(true);
-								frame.run(out, in);
+								frame.run();
 								break;
 							}
+							else
+								if(response.equals("GAMESETTINGS")){
+									GameSettings frame = new GameSettings(out,in);
+									
+									frame.setTitle("Game Settings");
+									
+									frame.addWindowListener( new WindowAdapter() {
+									
+										public void windowClosing(WindowEvent e) {
+											out.println("QUIT");
+											System.exit(0);
+										}
+									});
+									
+									this.setVisible(false);
+									frame.setVisible(true);
+									frame.run(out, in);
+									break;
+								}
 			} catch (IOException e1) {
 				System.out.println("Cos nie tak");
 				e1.printStackTrace();

@@ -68,6 +68,15 @@ public class NormalPlayer extends Player {
                 		
                 					output.println("MESSAGE Bad ammount");
                 				} 
+	            				else
+	                				if (command.startsWith("CHECKERS "))
+	                    				try{
+	                    					game.checkersNumber = Integer.parseInt(command.substring(9));
+	                    				}
+	                    				catch(NumberFormatException e){
+	                    		
+	                    					output.println("MESSAGE Bad ammount");
+	                    				}
             				else
 	            				if (command.startsWith("FINDOPPOMENTS "))
 	            					if((game.realPLayers_ammount+game.bots_ammount)>=2 && (game.realPLayers_ammount+game.bots_ammount)<=6 && (game.realPLayers_ammount+game.bots_ammount)!=5 ) {
@@ -123,10 +132,13 @@ public class NormalPlayer extends Player {
                 while (stage=="GAMEWINDOW") {
                 	String command = input.readLine();
                 		if(command.equals("END TURN")){
-                			game.board.board[Integer.parseInt(parts[3])][Integer.parseInt(parts[4])].duringLongJump=false;
-                			game.board.board[Integer.parseInt(parts[3])][Integer.parseInt(parts[4])].firstMove=true;
+                			
+                			System.out.println("O tutajj jump " + game.board.board[game.checkedX][game.checkedY].duringLongJump + "i first " + game.board.board[game.checkedX][game.checkedY].firstMove);
+                			game.board.board[game.checkedX][game.checkedY].duringLongJump=false;
+                			game.board.board[game.checkedX][game.checkedY].firstMove=true;
                 			game.turnCounter=(game.turnCounter+1)%game.players_ammount;
-                			System.out.println(game.realPLayers_ammount + " " + game.turnCounter);
+                			System.out.println("O tutajj jump " + game.board.board[game.checkedX][game.checkedY].duringLongJump + "i first " + game.board.board[game.checkedX][game.checkedY].firstMove);
+                			//System.out.println(game.realPLayers_ammount + " " + game.turnCounter);
                 			if(game.turnCounter<game.realPLayers_ammount)
                 				game.normalPlayerList.get(game.turnCounter).output.println("YOUR TURN");
                 		}
@@ -143,13 +155,15 @@ public class NormalPlayer extends Player {
 			                    	parts=command.split(";");
 			                    	//System.out.println(command);
 			                    	System.out.println(Integer.parseInt(parts[1])+" "+Integer.parseInt(parts[2])+ " " +Integer.parseInt(parts[3])+ " "+ Integer.parseInt(parts[4]));
-			                        //if (isMoveLegal(Integer.parseInt(parts[1]),Integer.parseInt(parts[2]),Integer.parseInt(parts[3]),Integer.parseInt(parts[4]), game.normalPlayerList.get(game.turnCounter))) {
+			                        if (isMoveLegal(Integer.parseInt(parts[1]),Integer.parseInt(parts[2]),Integer.parseInt(parts[3]),Integer.parseInt(parts[4]), game.normalPlayerList.get(game.turnCounter))) {
 			                        	//System.out.println("o tutaj2");
+			                        	game.checkedX=Integer.parseInt(parts[3]);
+			                        	game.checkedY=Integer.parseInt(parts[4]);
 			                        	for(int i=0;i<game.normalPlayerList.size();i++){
-			                            	if(!game.normalPlayerList.get(i).equals(this)){
+			                            	//if(!game.normalPlayerList.get(i).equals(this)){
 			                            		game.normalPlayerList.get(i).output.println(command);
-			                            		System.out.println("update");
-			                            	}
+			                            		//System.out.println("update");
+			                            	//}
 			                            }
 			                        	checkerMove(Integer.parseInt(parts[1]),Integer.parseInt(parts[2]),Integer.parseInt(parts[3]),Integer.parseInt(parts[4]));
 			                            //System.out.println("o tutaj3");
@@ -158,8 +172,8 @@ public class NormalPlayer extends Player {
 			                            	output.println("VICTORY");
 			                            	quitingPlayer();
 				                			return;
-			                           // }
-			                            } 
+			                           }
+			                    } 
 			                       // else {
 			                        	//System.out.println("oblales");
 			                        	//game.board.showBoard(game.board.board, game.boardSize);
@@ -167,11 +181,19 @@ public class NormalPlayer extends Player {
 			                     //  }
 			                    } 
 			                    else 
-			                    	if (command.startsWith("QUIT")) {
-			                    		output.println("QUIT");
-			                    		quitingPlayer();
-			                    		return;
-			                    	}	
+			                    	if (command.startsWith("CHECKX")) {
+			                    		game.checkedX=Integer.parseInt(command.substring(7));	                    	
+			                    	}
+			                    	else 
+			                    		if (command.startsWith("CHECKY")) {
+			                    			game.checkedY=Integer.parseInt(command.substring(7));
+					                    }
+					                    else 
+					                    	if (command.startsWith("QUIT")) {
+							                    output.println("QUIT");
+							                    quitingPlayer();
+							                    return;
+							                }	
 	                }
             } catch (IOException e) {
                 System.out.println("Player died: " + e);
@@ -190,18 +212,21 @@ public class NormalPlayer extends Player {
 			Boolean x=false;
 			if(game.normalPlayerList.get(game.turnCounter).equals(this))
 				x=true;
-			game.disconnectPlayer(this);
 			gameCleaner();
 			if(x){
+				game.disconnectPlayer(this);
 				if(game.players_ammount>0){
 					game.turnCounter=(game.turnCounter)%game.players_ammount;
 					if(game.turnCounter<game.realPLayers_ammount)
 						game.normalPlayerList.get(game.turnCounter).output.println("YOUR TURN");
 				}
 			}
-			else
-				if(game.normalPlayerList.get(game.turnCounter).equals(game.normalPlayerList.get(game.realPLayers_ammount-1)))
-					game.turnCounter--;
+			else{
+				if(game.players_ammount>1)
+					if(game.normalPlayerList.get(game.turnCounter).equals(game.normalPlayerList.get(game.realPLayers_ammount-1)))
+						game.turnCounter--;
+				game.disconnectPlayer(this);
+			}
 		}
 
 		/**
@@ -245,7 +270,7 @@ public class NormalPlayer extends Player {
 		public void gameCleaner() {
 			if(!(game.checkIfSomoneIs())){
 				allBotStoper();
-				gamelist.removeGame(game);
+				//gamelist.removeGame(game);
 			}
 		}
 		
@@ -260,6 +285,7 @@ public class NormalPlayer extends Player {
 					game=gamelist.findGame(string);
 					game.connectPlayer(this);
 					stage="GAMEWINDOW";
+					output.println("CHECKERSSIZE " + game.checkersNumber);
 					output.println("GOOD GAMENAME " + game.players_ammount + " " + game.boardSize);
 					startGameIfAllIn();
 				}
