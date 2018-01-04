@@ -17,19 +17,10 @@ public class Test extends TestCase {
     int height = 4*side-3;
 
     Board board1 = null;
-    //Board board2 = null;
-    //Board board3 = null;
 
     public void setUp() {
-        board1 = new Board(5, 6,10);
-        //board2 = new Board(5, 7);
-        //board3 = new Board(3, 6);
+        board1 = new Board(5, 6, 10);
     }
-/*
-    public void testBoard2NullPointerTrue() {
-
-        assertNull("Created board despite wrong amount", board2.board);
-    }*/
 
     public void testMoveIsLegal() {
 
@@ -37,6 +28,11 @@ public class Test extends TestCase {
         Assert.assertEquals(false, board1.isMoveLegal(1, 7, 2, 7, Colors.GREEN));
         Assert.assertEquals(false, board1.isMoveLegal(1, 7, 1, 1, Colors.GREEN));
 
+    }
+
+    public void testDidPlayerWin() {
+        board1.didPlayerWin(Colors.GREEN);
+        Assert.assertSame(false, board1.didPlayerWin(Colors.GREEN));
     }
 
     public void testGiveNeighbourToArray() {
@@ -64,30 +60,6 @@ public class Test extends TestCase {
 
     }
 
-    /*
-    //prywatna metoda
-    public void testPutCheckers() {
-        Field[][] b1 = new Field[width][height];
-
-        for(int i=0;i<side;i++) {
-            for (int j = 0; j < width; j++) {
-                b1[i][j] = new EmptyField(i,j);
-            }
-        }
-
-        boolean put = false;
-
-        for(int i=0;i<side;i++) {
-            for (int j = 0; j < width; j++) {
-                if (b1[i][j].kindOfField == 1) {
-                    board1.putCheckers();
-                    put = true;
-                }
-            }
-        }
-
-    }*/
-
     public void testFillerFirst(){
         Field[][] b1 = new Field[width][height];
 
@@ -108,13 +80,33 @@ public class Test extends TestCase {
             }
         }
 
-
         Assert.assertTrue("false", fill);
     }
+
 
     public void testArrayFirst() {
         assertNotNull("null", board1.arrayFirst());
     }
+
+    public void testArraySecond() {assertNotNull("null", board1.arraySecond());}
+
+    public void testArrayThird() {
+        assertNotNull("null", board1.arrayThird());
+    }
+
+    public void testArrayFourth() {
+        assertNotNull("null", board1.arrayFourth());
+    }
+
+    public void testArrayFifth() {
+        assertNotNull("null", board1.arrayFifth());
+    }
+
+    public void testArraySixth() {
+        assertNotNull("null", board1.arraySixth());
+    }
+
+
 
     public void testCheckIfInTarget() {
         Field[][] b1 = new Field[width][height];
@@ -147,10 +139,8 @@ public class Test extends TestCase {
     }
 
     public void testCheckIfInTargetHelper() {
-        //nie jest dobry i nie wiem co zmienic zeby bylo
         
         boolean is = false;
-       // System.out.println(b1[3][7].reachedTarget);
         board1.board[3][7] = new Checker(Colors.GREEN, 3, 7, 1);
         board1.checkIfInTarget(board1.board[3][7]);
      
@@ -162,15 +152,14 @@ public class Test extends TestCase {
     }
 
     public void testMakeEmptyBoard() {
-        Field[][] b1 = new Field[width][height];
+        boolean empty = false;
 
-        for(int i=0;i<side;i++) {
-            for (int j = 0; j < width; j++) {
-                b1[i][j] = new EmptyField(i, j);
-            }
-        }
+        board1.makeEmptyBoard(6);
 
-        //nie wiem jak sie zabrac za to, zeby poprawnie sprawdzic
+        if(board1.board != null)
+            empty = true;
+
+        Assert.assertTrue("false", empty);
     }
 
     public void tearDown() {
