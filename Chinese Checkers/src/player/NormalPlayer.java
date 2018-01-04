@@ -86,11 +86,11 @@ public class NormalPlayer extends Player {
 			            					game.setGameName(command.substring(14));
 			            					System.out.println("afasdfasd");
 			            					game.makeBoard();
+			            					System.out.println("ha");
 			            					gamelist.addGame(game);	            					
 			            					game.connectPlayer(this);
 			            					botMaker(game.bots_ammount);
-			            					startGameIfAllIn();
-			            					System.out.println("ha");
+			            					startGameIfAllIn();			            				
 			            					output.println("GAMEWINDOW");
 		            					}
 		            					else

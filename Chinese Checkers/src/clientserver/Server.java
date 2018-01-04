@@ -15,7 +15,19 @@ import player.NormalPlayer;
  */
 public class Server {
 
-  
+	 	private static Server INSTANCE;
+	 
+	 	private Server() {}
+	 
+	 	 public static Server getInstance() {
+	         if (INSTANCE == null)
+	             synchronized (Server.class) {
+	                 if (INSTANCE == null)
+	                     INSTANCE = new Server();
+	             }
+	         return INSTANCE;
+	     }
+	
     public static void main(String[] args) throws Exception {
         ServerSocket listener = new ServerSocket(8901);
         GameList gamelist=new GameList();
