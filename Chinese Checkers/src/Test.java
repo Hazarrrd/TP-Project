@@ -54,7 +54,8 @@ public class Test extends TestCase {
 
         boolean move = false;
 
-        b1[4][7] = new Checker(Colors.GREEN, 4, 7, 1);
+        board1.board[4][7] = new Checker(Colors.GREEN, 4, 7, 1);
+        b1[4][7]=board1.board[4][7];
         if(b1[4][7].kindOfField == 2) {
             board1.doMove(4,7,5,7);
             move = true;
@@ -124,10 +125,10 @@ public class Test extends TestCase {
                 b1[i][j] = new EmptyField(i, j);
             }
         }
+        board1.board[1][7]= new Checker(Colors.GREEN, 4, 7, 1);
+        Field c1 = board1.board[1][7];
 
-        Field c1 = b1[1][7];
-
-        board1.checkIfInTarget(c1);
+        //board1.checkIfInTarget(board1.board[1][7]);
         Assert.assertEquals(board1.checkIfInTriangle(c1,c1.target), board1.checkIfInTarget(c1));
     }
 
