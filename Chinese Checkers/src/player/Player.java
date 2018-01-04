@@ -66,6 +66,7 @@ public abstract class Player extends Thread {
      */
     protected void checkerMove(int X1, int Y1, int X2, int Y2) {
 		this.game.board.doMove(X1, Y1, X2, Y2);
+	//	this.game.board.showBoard(this.game.board.board, this.game.boardSize);
 	}
     
     /**
@@ -73,7 +74,7 @@ public abstract class Player extends Thread {
      * @param player
      */
     protected boolean didPlayerWon(Player player) {
-		return false;
+		return this.game.board.didPlayerWin(player.color);
 		// TODO Auto-generated method stub
 	}
     

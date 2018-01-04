@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
@@ -75,10 +76,7 @@ class Window extends Frame implements MouseListener, ActionListener {
 		communicate.setPreferredSize(new Dimension(215, 50));
 		endTurn.setPreferredSize(new Dimension(215, 10));
 		
-		labels.add(yourColor);
-		labels.add(whosTurn);
-		labels.add(communicate);
-		labels.add(endTurn);
+		adding();
 		
 		setResizable(false);
 		this.type = type;
@@ -98,6 +96,13 @@ class Window extends Frame implements MouseListener, ActionListener {
 	    this.setBackground(Color.GRAY);
 	    pack();
 	}
+
+	public void adding() {
+		labels.add(yourColor);
+		labels.add(whosTurn);
+		labels.add(communicate);
+		labels.add(endTurn);
+	}
 	
 	public void run() {
 		String response;
@@ -110,9 +115,15 @@ class Window extends Frame implements MouseListener, ActionListener {
 					else
 						if(response.startsWith("COLOR ")){
 							this.myColor=Colors.values()[Integer.parseInt(response.substring(6))];
+							labels.removeAll();
 							yourColor.setText("Your color is : " + myColor.toString());
+							adding();
+							repaint();
 							revalidate();
 						}
+						else
+							if(response.equals("QUIT"))
+								return;
 			}
 					
 			while(true){	
@@ -120,7 +131,10 @@ class Window extends Frame implements MouseListener, ActionListener {
 					
 						if(response.equals("YOUR TURN")){
 							isYourTurn=true;
+							labels.removeAll();
 							whosTurn.setText("Now this is your turn");
+							adding();
+							repaint();
 							revalidate();
 						}
 						else
@@ -132,9 +146,46 @@ class Window extends Frame implements MouseListener, ActionListener {
 								painting();
 								data.board[Integer.parseInt(response.split(";")[1])][Integer.parseInt(response.split(";")[2])].addMouseListener(this);
 								revalidate();
+								repaint();
 							}
-				
-				
+							else
+								if(response.equals("QUIT"))
+									break;
+								else
+									if(response.equals("VICTORY")){
+										 String msg = "VICTORY! Hope you wll come back, thank you for the game";
+								
+									  JOptionPane.showMessageDialog(this,                        // okno-w³asciciel
+									                                msg,                         // komunikat
+									                                "You have won!",             // tytu³
+									                                JOptionPane.WARNING_MESSAGE, // rodzaj komnunikatu
+									                                null                        // ikona
+									                                );
+										
+									  System.exit(0);
+									}
+									else
+										if(response.startsWith("LOSE ")){								
+											data.deleteCheckers(Colors.valueOf(response.substring(5)),this);
+											board.removeAll();
+											painting();
+											 String msg = "DEFEAT! But if you only want, you can still continue the game";
+												
+											  JOptionPane.showMessageDialog(this,                        // okno-w³asciciel
+											                                msg,                         // komunikat
+											                                "DEFEAT!",             // tytu³
+											                                JOptionPane.WARNING_MESSAGE, // rodzaj komnunikatu
+											                                null                        // ikona
+											                                );
+										}
+						labels.removeAll();						
+						adding();
+						repaint();
+						revalidate();
+						pack();
+											
+								
+						
 				} 
 			}
 		catch (IOException e1) {
@@ -184,13 +235,13 @@ class Window extends Frame implements MouseListener, ActionListener {
 						int y=checkedField.Y1;
 						out.println("DO MOVE ;" + x + ";" + y + ";" + field.X1 + ";" + field.Y1);
 						data.doMove(x,y , field.X1, field.Y1);
-						//board.removeAll();
-						//board.revalidate();
+						board.removeAll();
+						board.revalidate();
 						board.removeAll();
 						painting();
 						data.board[x][y].addMouseListener(this);
 						revalidate();
-						//repaint();
+						repaint();
 					}
 				}
 		}
@@ -295,7 +346,20 @@ class Window extends Frame implements MouseListener, ActionListener {
 			checkedField=null;
 			isYourTurn=false;
 			out.println("END TURN");
+			labels.removeAll();
 			whosTurn.setText("It's not your turn, wait please");
+			adding();
+			repaint();
+			revalidate();
+			
+		}
+		else{
+			isYourTurn=false;
+			out.println("END TURN2");
+			labels.removeAll();
+			whosTurn.setText("It's not your turn, wait please");
+			adding();
+			repaint();
 			revalidate();
 		}
 		
