@@ -22,6 +22,7 @@ public class NormalPlayer extends Player {
 
 		public NormalPlayer(Socket socket,GameList gamelist) {
             super(socket,gamelist);
+            isBot=false;
         }
 		
 		/**
@@ -139,15 +140,19 @@ public class NormalPlayer extends Player {
                 			game.turnCounter=(game.turnCounter+1)%game.players_ammount;
                 			System.out.println("O tutajj jump " + game.board.board[game.checkedX][game.checkedY].duringLongJump + "i first " + game.board.board[game.checkedX][game.checkedY].firstMove);
                 			//System.out.println(game.realPLayers_ammount + " " + game.turnCounter);
-                			if(game.turnCounter<game.realPLayers_ammount)
-                				game.normalPlayerList.get(game.turnCounter).output.println("YOUR TURN");
+                			if(!game.playerList.get(game.turnCounter).isBot)
+                				game.playerList.get(game.turnCounter).output.println("YOUR TURN");
+                			else
+                				game.playerList.get(game.turnCounter).yourTurn=true;
                 		}
                 		else
                 			if(command.equals("END TURN2")){
                     			game.turnCounter=(game.turnCounter+1)%game.players_ammount;
                     			System.out.println(game.realPLayers_ammount + " " + game.turnCounter);
-                    			if(game.turnCounter<game.realPLayers_ammount)
-                    				game.normalPlayerList.get(game.turnCounter).output.println("YOUR TURN");
+                    			if(!game.playerList.get(game.turnCounter).isBot)
+                    				game.playerList.get(game.turnCounter).output.println("YOUR TURN");
+                    			else
+                    				game.playerList.get(game.turnCounter).yourTurn=true;
                     		}
 		                	else
 			                    if (command.startsWith("DO MOVE ")) {
@@ -253,8 +258,10 @@ public class NormalPlayer extends Player {
 				Random ran = new Random();
 				int x = ran.nextInt(game.players_ammount)+100;
 				game.turnCounter=x%game.players_ammount;
-    			if(game.turnCounter<game.realPLayers_ammount)
-    				game.normalPlayerList.get(game.turnCounter).output.println("YOUR TURN");
+    			if(!(game.playerList.get(game.turnCounter).isBot))
+    				game.playerList.get(game.turnCounter).output.println("YOUR TURN");
+    			else
+    				game.playerList.get(game.turnCounter).yourTurn=true;
 			}
 		}
 

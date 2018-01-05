@@ -26,6 +26,7 @@ class BOTPlayer extends Player implements Runnable {
     	public BOTPlayer(Game game) {
             super();
             this.game=game; 
+            isBot=true;
         }
     	
     	/**

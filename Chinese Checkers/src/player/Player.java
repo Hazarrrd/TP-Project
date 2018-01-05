@@ -26,6 +26,8 @@ public abstract class Player extends Thread {
     int X1,Y1;
     Game game;
     GameList gamelist;
+    Boolean isBot;
+    Boolean yourTurn;
 
     //constructor
     public Player(Socket socket, GameList gamelist) {
