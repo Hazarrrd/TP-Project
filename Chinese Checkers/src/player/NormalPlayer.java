@@ -243,7 +243,7 @@ public class NormalPlayer extends Player {
 				game.actualPlayer=game.playerList.get(game.turnCounter);
 				game.findOppoments=true;
 				for(int i=0;i<game.normalPlayerList.size();i++)
-					game.normalPlayerList.get(i).output.println("COLOR " + i);
+					game.playerList.get(i).output.println("COLOR " + i);
 				for(int i=game.normalPlayerList.size();i<game.playerList.size();i++)
 					game.playerList.get(i).color=Colors.values()[i];
 				
