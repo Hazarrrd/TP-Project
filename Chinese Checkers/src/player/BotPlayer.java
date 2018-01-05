@@ -1,4 +1,8 @@
 package player;
+import java.util.ArrayList;
+
+import fields.Checker;
+import fields.Field;
 import game.Colors;
 import game.Game;
 /**
@@ -8,6 +12,12 @@ import game.Game;
  */
 class BOTPlayer extends Player implements Runnable {
     	
+	
+	
+		ArrayList<Checker> botCheckers;
+		Field botTarget;
+		Boolean yourTurn=false;
+		
     	/**
     	 * constructor
     	 * @param color
@@ -21,24 +31,31 @@ class BOTPlayer extends Player implements Runnable {
     	/**
     	 * Method responsible for communication client-server and for thread run.
     	 */
-    	public void run() {
+    	public synchronized void run() {
     			//wait for all players
         		while(game.findOppoments==true){
-        		//	try {
-						//this.wait();
-					//} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-					//	e.printStackTrace();
-				//	}
+        			try {
+						this.wait();
+					} catch (InterruptedException e) {
+					}
         		}
-               // botMove(this);
+        		
+        		while(true){
+        			while(yourTurn){
+            			try {
+            				botMove();
+    						this.wait();
+    					} catch (InterruptedException e) {
+    					}
+            		}
+        		}
         }
     /**
      * Procedure makes bot moves.
      * @param bot
      */
-	public void botMove(BOTPlayer bot) {
-		// TODO Auto-generated method stub
-		
+	private void botMove() {
+		game.turnCounter=(game.turnCounter+1)%game.players_ammount;
+		yourTurn=false;
 	}
 }
